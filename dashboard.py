@@ -112,6 +112,14 @@ def ikk_label(val):
     return "Kritis 🔴"
 
 
+def hex_rgba(hex6, alpha=255):
+    """Convert '#RRGGBB' + alpha byte (0-255) to an 'rgba(r,g,b,a)' string.
+    Plotly rejects 8-digit #RRGGBBAA hex, so opacity tints must use rgba()."""
+    h = hex6.lstrip("#")
+    r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+    return f"rgba({r},{g},{b},{round(alpha / 255, 3)})"
+
+
 def send_test_data(suhu, moisture, gas, device_id):
     payload = {
         "device_id": device_id,
@@ -376,10 +384,10 @@ with tab1:
                 "bgcolor":     "rgba(0,0,0,0)",
                 "borderwidth": 0,
                 "steps": [
-                    {"range": [0, 40],  "color": "#7F1D1D33"},
-                    {"range": [40, 60], "color": "#78350F33"},
-                    {"range": [60, 80], "color": "#365314_33"},
-                    {"range": [80,100], "color": "#14532D33"},
+                    {"range": [0, 40],  "color": hex_rgba("#7F1D1D", 0x33)},
+                    {"range": [40, 60], "color": hex_rgba("#78350F", 0x33)},
+                    {"range": [60, 80], "color": hex_rgba("#365314", 0x33)},
+                    {"range": [80,100], "color": hex_rgba("#14532D", 0x33)},
                 ],
                 "threshold": {
                     "line": {"color": "white", "width": 2},
@@ -455,7 +463,7 @@ with tab1:
                 mode="lines",
                 line=dict(color=color, width=2),
                 fill="tozeroy",
-                fillcolor=color + "22",
+                fillcolor=hex_rgba(color, 0x22),
                 name=col_name,
                 showlegend=False,
             ), row=1, col=col_idx)
@@ -545,7 +553,7 @@ with tab2:
                 x=df_trend["timestamp"], y=df_trend[col_name],
                 mode="lines", name=SENSOR_CFG[col_name]["label"],
                 line=dict(color=color, width=2),
-                fill="tozeroy", fillcolor=color + "18",
+                fill="tozeroy", fillcolor=hex_rgba(color, 0x18),
             ), row=row_idx, col=1)
 
         # IKK
@@ -553,7 +561,7 @@ with tab2:
             x=df_trend["timestamp"], y=df_trend["ikk"],
             mode="lines", name="IKK",
             line=dict(color="#FCD34D", width=2.5),
-            fill="tozeroy", fillcolor="#FCD34D18",
+            fill="tozeroy", fillcolor=hex_rgba("#FCD34D", 0x18),
         ), row=4, col=1)
 
         # Threshold lines IKK
@@ -655,12 +663,12 @@ with tab3:
             # Area fill pos/neg
             fig_sprt.add_trace(go.Scatter(
                 x=df_sprt["timestamp"], y=cs.clip(lower=0),
-                fill="tozeroy", fillcolor="#22C55E18",
+                fill="tozeroy", fillcolor=hex_rgba("#22C55E", 0x18),
                 line=dict(width=0), showlegend=False,
             ), row=row_idx, col=1)
             fig_sprt.add_trace(go.Scatter(
                 x=df_sprt["timestamp"], y=cs.clip(upper=0),
-                fill="tozeroy", fillcolor="#EF444418",
+                fill="tozeroy", fillcolor=hex_rgba("#EF4444", 0x18),
                 line=dict(width=0), showlegend=False,
             ), row=row_idx, col=1)
 
@@ -796,7 +804,7 @@ with tab4:
                 fig_agg.add_trace(go.Scatter(
                     x=pd.concat([x, x[::-1]]),
                     y=pd.concat([y_mean + y_std, (y_mean - y_std)[::-1]]),
-                    fill="toself", fillcolor=pcolor + "22",
+                    fill="toself", fillcolor=hex_rgba(pcolor, 0x22),
                     line=dict(width=0), showlegend=False,
                 ), row=row_i, col=1)
 
@@ -804,7 +812,7 @@ with tab4:
                 fig_agg.add_trace(go.Scatter(
                     x=pd.concat([x, x[::-1]]),
                     y=pd.concat([y_max, y_min[::-1]]),
-                    fill="toself", fillcolor=pcolor + "0F",
+                    fill="toself", fillcolor=hex_rgba(pcolor, 0x0F),
                     line=dict(width=0), showlegend=False,
                     name=f"{pname} range",
                 ), row=row_i, col=1)
