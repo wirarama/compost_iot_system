@@ -1,35 +1,34 @@
 /*
  ============================================================
-  FIRMWARE ESP8266 — Monitoring Kompos IoT v2
-  Hardware : NodeMCU ESP8266 / Wemos D1 Mini
+  FIRMWARE ESP32 — Monitoring Kompos IoT v2
+  Hardware : Wemos D1 R32 (ESPDuino-32, ESP32-WROOM-32)
   Sensor   : DS18B20 (1-Wire) | Capacitive Soil Moisture | MQ-135
   Protokol : HTTP POST JSON ke Flask server
  ============================================================
-  Wiring:
-    DS18B20      → D4 (GPIO2) + 4.7kΩ pull-up ke 3.3V
-    Soil Moisture → A0 (ADC)  – output analog 0-3.3V
-    MQ-135       → D5 (GPIO14) via external ADC ADS1115
-                   ATAU gunakan ADC multiplexer eksternal
-                   (ESP8266 hanya punya 1 ADC)
-    LED Status   → D7 (GPIO13) + 220Ω
+  Wiring (label header board · GPIO):
+    DS18B20       → D4 (GPIO17) + 4.7kΩ pull-up ke 3.3V
+    Soil Moisture → A3 (GPIO34, ADC1) — output analog 0-3.3V, beri daya 3.3V
+    MQ-135        → A2 (GPIO35, ADC1) via divider 5V→3.3V (heater @5V)
+    LED Status    → D7 (GPIO14) + 220Ω
+    Onboard LED   → GPIO2 (active-HIGH)
 
-  Untuk ESP8266 dengan 1 ADC:
-    - Soil Moisture di A0 (langsung)
-    - MQ-135 via voltage divider + sampling bergantian
-      (diimplementasi dengan software multiplexing)
+  Dua ADC native — tanpa mux:
+    - Sensor analog WAJIB di ADC1 (GPIO32-39): ADC2 mati saat WiFi aktif.
+    - JANGAN pakai header A0/A1 (=GPIO2/4, ADC2 + touch, tidak reliabel).
  ============================================================
   Library yang diperlukan (install via Library Manager):
-    - ESP8266WiFi       (built-in)
-    - ESP8266HTTPClient (built-in)
-    - ArduinoJson       v6.x   (boccio/ArduinoJson)
+    - WiFi              (built-in esp32 core)
+    - HTTPClient        (built-in esp32 core)
+    - ArduinoJson       v6.x   (bblanchon/ArduinoJson)
     - OneWire           v2.3   (PaulStoffregen/OneWire)
     - DallasTemperature v3.9   (milesburton/DallasTemperature)
     - NTPClient         v3.2   (Arduino NTPClient)
+  Board: "WEMOS D1 R32"  (FQBN esp32:esp32:d1_uno32)
  ============================================================
 */
 
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
+#include <WiFi.h>
+#include <HTTPClient.h>
 #include <WiFiClient.h>
 #include <ArduinoJson.h>
 #include <OneWire.h>
@@ -66,15 +65,14 @@ const int HTTP_TIMEOUT    = 10000;  // 10 detik
 // ════════════════════════════════════════════════════════════
 // PIN DEFINITIONS
 // ════════════════════════════════════════════════════════════
-#define PIN_DS18B20     D4   // GPIO2  - OneWire data
-#define PIN_MOISTURE    A0   // ADC    - Capacitive soil moisture
-#define PIN_MQ135_SEL   D5   // GPIO14 - Relay/switch selector MQ-135 ke ADC
-#define PIN_LED_STATUS  D7   // GPIO13 - Status LED
-#define PIN_LED_BUILTIN LED_BUILTIN  // GPIO2 built-in LED (inverted)
-
-// Untuk MQ-135: karena ADC hanya 1, kita gunakan teknik time-multiplexing
-// Ganti nilai ini jika menggunakan ADS1115 eksternal (direkomendasikan)
-#define USE_ADS1115     false   // set true jika pakai ADS1115
+// Wemos D1 R32 (ESPDuino-32, ESP32-WROOM-32) — Arduino-Uno form factor.
+// Sensor analog WAJIB di ADC1 (GPIO32-39): ADC2 mati saat WiFi aktif.
+// Header board: A3=GPIO34, A2=GPIO35 (ADC1). Hindari A0/A1 (=GPIO2/4, ADC2 + touch).
+#define PIN_DS18B20     17   // header D4 · GPIO17 · OneWire data (+4.7kΩ pull-up ke 3.3V)
+#define PIN_MOISTURE    34   // header A3 · GPIO34 · ADC1_CH6 (input-only) soil moisture @3.3V
+#define PIN_MQ135       35   // header A2 · GPIO35 · ADC1_CH7 (input-only) MQ-135 AOUT via divider 5V→3.3V
+#define PIN_LED_STATUS  14   // header D7 · GPIO14 · Status LED (+220Ω)
+#define PIN_LED_BUILTIN 2    // onboard LED · GPIO2 · active-HIGH (TIDAK inverted di ESP32)
 
 // ════════════════════════════════════════════════════════════
 // SENSOR CALIBRATION
@@ -83,8 +81,8 @@ const int HTTP_TIMEOUT    = 10000;  // 10 detik
 // Capacitive Soil Moisture Calibration
 // Ukur nilai ADC saat sensor di udara kering (dry_val)
 // dan saat tercelup air sepenuhnya (wet_val)
-const int MOISTURE_DRY_VAL  = 880;   // ADC saat kering (di udara)
-const int MOISTURE_WET_VAL  = 380;   // ADC saat basah (tercelup air)
+const int MOISTURE_DRY_VAL  = 3200;  // ADC 12-bit saat kering — TODO re-measure (was 880 @10-bit)
+const int MOISTURE_WET_VAL  = 1400;  // ADC 12-bit saat basah — TODO re-measure (was 380 @10-bit)
 const float MOISTURE_MIN_PCT = 0.0;
 const float MOISTURE_MAX_PCT = 100.0;
 
@@ -93,8 +91,10 @@ const float MOISTURE_MAX_PCT = 100.0;
 // RL = resistance beban (load resistor, default 10kΩ)
 float MQ135_RO         = 10.0;  // kΩ — dikalibrasi saat startup
 const float MQ135_RL   = 10.0;  // kΩ load resistor
-const float MQ135_VCC  = 3.3;   // V supply
-const float MQ135_ADC_MAX = 1023.0;
+const float MQ135_VCC  = 5.0;   // V — supply heater MQ-135 (was 3.3, tercampur dgn ref ADC)
+const float MQ135_ADC_VREF      = 3.3;    // V — full-scale ADC @ ADC_11db
+const float MQ135_DIVIDER_RATIO = 1.5;    // (R1+R2)/R2 = 30k/20k, pulihkan AOUT 0-5V
+const float MQ135_ADC_MAX = 4095.0; // ADC 12-bit ESP32 (was 1023.0)
 
 // Kurva sensitifitas MQ-135 (y = a * x^b, dari datasheet)
 // Parameter untuk NH3
@@ -132,6 +132,23 @@ float moistBuffer[MA_WINDOW] = {0};
 float gasBuffer[MA_WINDOW]   = {0};
 int bufIdx = 0;
 bool bufFull = false;
+
+// Struct data sensor & hasil POST — didefinisikan di atas semua fungsi
+// supaya prototipe otomatis Arduino (.ino) mengenali tipenya.
+struct SensorData {
+    float temperature;
+    float moisture;
+    float gas;
+    String timestamp;
+};
+
+struct PostResult {
+    int    httpCode;
+    bool   success;
+    String fase_nama;
+    float  ikk;
+    String message;
+};
 
 
 // ════════════════════════════════════════════════════════════
@@ -225,26 +242,20 @@ float readMoisture() {
 
 // ── MQ-135 Gas Sensor ────────────────────────────────────────
 float readGas(float temperature, float humidity) {
-    // Switching ADC ke MQ-135 (jika menggunakan multiplexer)
-    digitalWrite(PIN_MQ135_SEL, HIGH);
-    delay(50);
-
-    // Baca ADC
+    // MQ-135 punya pin ADC sendiri (GPIO35) — tidak ada mux lagi
     long sum = 0;
     const int SAMPLES = 8;
     for (int i = 0; i < SAMPLES; i++) {
-        sum += analogRead(PIN_MOISTURE);  // A0 yang sama setelah switch
+        sum += analogRead(PIN_MQ135);
         delay(10);
     }
     float raw = (float)(sum / SAMPLES);
 
-    // Kembalikan ADC ke moisture
-    digitalWrite(PIN_MQ135_SEL, LOW);
+    // ADC → tegangan pin, lalu pulihkan AOUT 0-5V lewat rasio divider
+    float vADC    = (raw / MQ135_ADC_MAX) * MQ135_ADC_VREF;
+    float vSensor = vADC * MQ135_DIVIDER_RATIO;
 
-    // Konversi ADC → tegangan
-    float vSensor = (raw / MQ135_ADC_MAX) * MQ135_VCC;
-
-    // Hindari pembagian dengan nol
+    // Hindari pembagian dengan nol (VCC sekarang 5.0)
     if (vSensor >= MQ135_VCC || vSensor <= 0) {
         Serial.println("[WARN] MQ-135 tegangan tidak valid");
         return lastGas;
@@ -274,17 +285,14 @@ void calibrateMQ135() {
 
     float sum = 0;
     const int CAL_SAMPLES = 50;
-    digitalWrite(PIN_MQ135_SEL, HIGH);
-    delay(100);
     for (int i = 0; i < CAL_SAMPLES; i++) {
-        float raw = analogRead(PIN_MOISTURE);
-        float v   = (raw / MQ135_ADC_MAX) * MQ135_VCC;
+        float raw = analogRead(PIN_MQ135);
+        float v   = (raw / MQ135_ADC_MAX) * MQ135_ADC_VREF * MQ135_DIVIDER_RATIO;
         if (v > 0 && v < MQ135_VCC) {
             sum += ((MQ135_VCC - v) / v) * MQ135_RL;
         }
         delay(200);
     }
-    digitalWrite(PIN_MQ135_SEL, LOW);
 
     MQ135_RO = (sum / CAL_SAMPLES) / 3.6;  // 3.6 = RS/RO di udara bersih
     MQ135_RO = constrain(MQ135_RO, 1.0, 100.0);
@@ -351,21 +359,6 @@ bool connectWiFi() {
 // ════════════════════════════════════════════════════════════
 // HTTP POST FUNCTION
 // ════════════════════════════════════════════════════════════
-struct SensorData {
-    float temperature;
-    float moisture;
-    float gas;
-    String timestamp;
-};
-
-struct PostResult {
-    int    httpCode;
-    bool   success;
-    String fase_nama;
-    float  ikk;
-    String message;
-};
-
 PostResult sendSensorData(const SensorData& data) {
     PostResult result = {0, false, "", 0.0, "not sent"};
 
@@ -383,7 +376,7 @@ PostResult sendSensorData(const SensorData& data) {
     doc["suhu"]       = round(data.temperature * 100) / 100.0;
     doc["moisture"]   = round(data.moisture * 100) / 100.0;
     doc["gas"]        = round(data.gas * 10) / 10.0;
-    doc["firmware"]   = "ESP8266_v2.0";
+    doc["firmware"]   = "ESP32_v2.0";
     doc["uptime"]     = getUptime();
     doc["wifi_rssi"]  = WiFi.RSSI();
 
@@ -460,16 +453,19 @@ void setup() {
     delay(1000);
     Serial.println("\n\n");
     Serial.println("========================================");
-    Serial.println("  KomposIoT Firmware v2.0");
+    Serial.println("  KomposIoT Firmware v2.0 — ESP32 (Wemos D1 R32)");
     Serial.println("  Universitas Mataram");
     Serial.println("========================================");
 
     // Inisialisasi pin
     pinMode(PIN_LED_STATUS, OUTPUT);
-    pinMode(PIN_MQ135_SEL,  OUTPUT);
     pinMode(PIN_LED_BUILTIN, OUTPUT);
     digitalWrite(PIN_LED_STATUS, LOW);
-    digitalWrite(PIN_MQ135_SEL,  LOW);  // Default: baca moisture
+
+    // Konfigurasi ADC ESP32: 12-bit, atenuasi penuh (~0-3.3V) untuk kedua pin analog
+    analogReadResolution(12);
+    analogSetPinAttenuation(PIN_MOISTURE, ADC_11db);
+    analogSetPinAttenuation(PIN_MQ135,    ADC_11db);
 
     // Inisialisasi sensor DS18B20
     ds18b20.begin();
@@ -490,12 +486,9 @@ void setup() {
     Serial.print("[NTP] Waktu: ");
     Serial.println(getTimestamp());
 
-    // Jika RO belum dikalibrasi, lakukan sekarang
-    // CATATAN: Hapus komentar untuk kalibrasi ulang
-    // calibrateMQ135();
+    // Kalibrasi RO MQ-135 saat pertama kali; loadCalibration() sudah skip jika EEPROM valid
     if (!mq135WarmedUp) {
-        Serial.println("[CAL] Menggunakan RO default = 10.0 kΩ");
-        Serial.println("[INFO] Uncomment calibrateMQ135() untuk kalibrasi ulang");
+        calibrateMQ135();   // ~30 detik warmup + kalibrasi RO, disimpan ke EEPROM
     }
 
     // Pre-fill buffer moving average dengan pembacaan awal
@@ -594,7 +587,7 @@ void loop() {
         Serial.println("----------------------------");
 
         // LED indikator status keseluruhan
-        digitalWrite(PIN_LED_BUILTIN, HIGH);  // Builtin off (inverted)
+        digitalWrite(PIN_LED_BUILTIN, LOW);   // Builtin off (active-HIGH di ESP32)
     }
 
     // Watchdog: jika terlalu banyak error, restart
@@ -619,60 +612,44 @@ void loop() {
   DS18B20 (TO-92 — 3 kaki):
     GND  → GND
     VCC  → 3.3V
-    DATA → D4 (GPIO2) + Resistor 4.7kΩ ke 3.3V
+    DATA → header D4 (GPIO17) + Resistor 4.7kΩ ke 3.3V
 
   Capacitive Soil Moisture (5-pin module):
-    VCC  → 3.3V (atau 5V jika modul mensupport)
+    VCC  → 3.3V
     GND  → GND
-    AOUT → A0 (ADC)
-    NOTE: Sensor ini mengukur kapasitansi, bukan resistansi.
-          Tidak berkarat! Output TINGGI = KERING.
+    AOUT → header A3 (GPIO34, ADC1)
+    NOTE: Sensor kapasitif (bukan resistif). Tidak berkarat! Output TINGGI = KERING.
+          Beri daya 3.3V supaya AOUT tetap ≤3.3V (aman untuk ADC ESP32).
 
   MQ-135 (4-pin module):
-    VCC  → 5V (PENTING: MQ-135 butuh 5V untuk heater)
+    VCC  → 5V (PENTING: heater MQ-135 butuh 5V)
     GND  → GND
-    AOUT → lihat opsi di bawah
+    AOUT → voltage divider → header A2 (GPIO35, ADC1)
 
-  OPSI UNTUK 2 SENSOR ANALOG DENGAN 1 ADC ESP8266:
+  DUA ADC NATIVE — TANPA MUX:
   ──────────────────────────────────────────────────
-
-  OPSI A (Multiplexer Hardware - Direkomendasikan):
-    Gunakan CD4051B atau CD74HC4051 8-channel analog mux
-    - COM → A0 (ESP8266)
-    - CH0 → Soil Moisture AOUT
-    - CH1 → MQ-135 AOUT (melalui voltage divider 5V→3.3V)
-    - S0, S1, S2 → D5, D6, D7 (kontrol channel)
-
-  OPSI B (Time Multiplexing Software - Diimplementasi):
-    Gunakan relay atau transistor MOSFET untuk switch
-    - MQ-135 AOUT → D5 (relay COM/NO)
-    - Soil Moisture AOUT → A0 (langsung)
-    - Saat baca MQ-135: aktifkan relay → A0 terima dari MQ-135
-    - Saat baca moisture: nonaktifkan relay → A0 terima dari moisture
-
-  OPSI C (ADS1115 16-bit ADC eksternal - Terbaik):
-    ADS1115 via I2C (SDA=D2/GPIO4, SCL=D1/GPIO5)
-    - A0 → Soil Moisture AOUT
-    - A1 → MQ-135 AOUT (via voltage divider)
-    Ubah USE_ADS1115 menjadi true dan tambahkan library:
-    #include <Adafruit_ADS1X15.h>
+    ESP32 punya banyak channel ADC, jadi tiap sensor analog dapat pin sendiri.
+    WAJIB pakai pin ADC1 (GPIO32-39): ADC2 tidak bisa dibaca saat WiFi aktif.
+    Di Wemos D1 R32:  A3=GPIO34, A2=GPIO35 (ADC1, aman).
+    JANGAN pakai A0/A1 (=GPIO2/4): itu ADC2 + capacitive-touch — hasil salah + gagal saat WiFi.
 
   VOLTAGE DIVIDER untuk MQ-135 (5V → 3.3V):
     MQ-135 AOUT → R1 (10kΩ) → node tengah → R2 (20kΩ) → GND
-    node tengah → ADC input
-    Vout = Vin * (R2 / (R1+R2)) = 5V * (20/30) = 3.33V ≈ 3.3V
+    node tengah → header A2 (GPIO35)
+    Vout = 5V * (20 / (10+20)) = 3.33V ≈ 3.3V   (rasio pulih = 1.5 di firmware)
 
   LED STATUS:
-    D7 (GPIO13) → 220Ω → LED → GND
+    header D7 (GPIO14) → 220Ω → LED → GND
     Blink 1x = data terkirim OK
     Blink 3x = error HTTP
     Blink 5x = ada alert dari server
     Blink cepat saat startup = menyambung WiFi
 
   POWER SUPPLY:
-    - ESP8266: USB 5V atau regulator 3.3V
-    - MQ-135 heater butuh 5V/150mA — gunakan pin 5V (Vin) NodeMCU
-    - Total konsumsi: ~300-400mA saat WiFi aktif
+    - Wemos D1 R32: USB 5V (atau 5-12V lewat jack/VIN)
+    - MQ-135 heater butuh 5V/~150mA — pakai pin 5V board
+    - Sensor moisture + DS18B20: 3.3V
+    - Total konsumsi: ~300-500mA saat WiFi aktif
 
   TROUBLESHOOTING:
   ────────────────
@@ -680,16 +657,17 @@ void loop() {
      → Cek resistor 4.7kΩ pull-up
      → Cek polaritas kabel (lihat marking flat-side sensor)
   2. Moisture selalu 0% atau 100%:
-     → Kalibrasi ulang MOISTURE_DRY_VAL dan MOISTURE_WET_VAL
+     → Kalibrasi ulang MOISTURE_DRY_VAL dan MOISTURE_WET_VAL (skala 12-bit, 0-4095)
      → Baca nilai ADC di udara dan di air dengan Serial Monitor
-  3. MQ-135 nilai tidak stabil:
-     → Tunggu warmup minimal 30 detik
-     → Lakukan kalibrasi di udara bersih (uncomment calibrateMQ135())
-  4. HTTP 0 (timeout):
-     → Cek SERVER_HOST sudah benar
-     → Pastikan server.py berjalan (python server.py)
-     → Cek firewall — port 5000 harus terbuka
-  5. WiFi tidak bisa connect:
+  3. MQ-135 nilai konstan / tidak stabil:
+     → Tunggu warmup minimal 30 detik (kalibrasi RO jalan otomatis saat boot pertama)
+     → Pastikan AOUT lewat divider ke A2 (GPIO35), bukan langsung 5V
+  4. Nilai analog aneh / selalu ~0 saat WiFi nyala:
+     → Sensor mungkin tersambung ke pin ADC2 — pindahkan ke A2/A3 (ADC1)
+  5. HTTP 0 (timeout):
+     → Cek SERVER_HOST sudah benar (IP LAN server, bukan localhost)
+     → Pastikan server.py berjalan (python server.py), firewall buka port 5000
+  6. WiFi tidak bisa connect:
      → Cek SSID/password (case-sensitive!)
-     → ESP8266 hanya support WiFi 2.4GHz
+     → ESP32 hanya support WiFi 2.4GHz
 */
