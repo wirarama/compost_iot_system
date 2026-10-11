@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pairing &amp; security · CompostIQ docs</title>
+<meta name="description" content="How a device joins your account, the safeguards on pairing codes and device keys, and what to do if one is exposed.">
+<link rel="canonical" href="https://compostiq.win/docs/security/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CompostIQ">
+<meta property="og:title" content="Pairing &amp; security · CompostIQ docs">
+<meta property="og:description" content="How a device joins your account, the safeguards on pairing codes and device keys, and what to do if one is exposed.">
+<meta property="og:url" content="https://compostiq.win/docs/security/">
+<meta name="theme-color" content="#3D6B09">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700..800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+<div class="wrap wrap--wide site-header__row">
+<a class="brand" href="/" aria-label="CompostIQ home">
+<span class="brand__mark"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 21c.5-4.5 2.5-8 7-10"/><path d="M9 18c6.218 0 10.5-3.288 11-12v-2h-4.014c-9 0-11.986 4-12 9c0 1 0 3 2 5h3z"/></svg></span>
+<span>Compost<span class="brand__accent">IQ</span> <span class="brand__suffix">docs</span></span>
+</a>
+<nav class="site-nav" aria-label="Main">
+<a href="/#how">How it works</a>
+<a href="/open-data/">Open data</a>
+<a href="/docs/" aria-current="true">Docs</a>
+</nav>
+<div class="site-header__cta">
+<a class="btn btn--ghost hide-sm" href="https://dashboard.compostiq.win/login">Sign in</a>
+<a class="btn btn--primary" href="https://dashboard.compostiq.win/register">Create account</a>
+</div>
+</div>
+</header>
+
+<div class="wrap wrap--wide docs-layout">
+
+<nav class="docs-mobile" aria-label="Documentation">
+<a href="/docs/">Quickstart</a>
+<a href="/docs/api/">API reference</a>
+<a href="/open-data/#fields">Data dictionary</a>
+<a href="/docs/security/" aria-current="page">Pairing &amp; security</a>
+</nav>
+
+<nav class="docs-side" aria-label="Documentation">
+<div>
+<h2>Get started</h2>
+<a href="/docs/">Quickstart</a>
+<a href="/open-data/#fields">Data dictionary</a>
+<a href="/docs/api/#errors">Rate limits &amp; errors</a>
+</div>
+<div>
+<h2>Public statistics</h2>
+<a href="/docs/api/#public-stats"><span class="verb">GET</span>/public/stats</a>
+<a href="/docs/api/#public-bins-by-country"><span class="verb">GET</span>/public/bins-by-country</a>
+<a href="/docs/api/#public-trends"><span class="verb">GET</span>/public/trends</a>
+</div>
+<div>
+<h2>Research data</h2>
+<a href="/docs/api/"><span class="verb">GET</span>/research/readings</a>
+<a href="/docs/api/#research-bins"><span class="verb">GET</span>/research/bins</a>
+<a href="/docs/api/#research-stages"><span class="verb">GET</span>/research/stages</a>
+</div>
+<div>
+<h2>Devices &amp; accounts</h2>
+<a href="/docs/security/" aria-current="page">Pairing &amp; security</a>
+</div>
+<div>
+<h2>Resources</h2>
+<a href="/open-data/#downloads">Bulk downloads</a>
+<a href="https://api.compostiq.win/openapi.json">OpenAPI spec (JSON)</a>
+<a href="/docs/api/#changelog">Changelog</a>
+</div>
+</nav>
+
+<main id="main" class="docs-main prose">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/docs/">Docs</a><span aria-hidden="true">/</span><span>Devices &amp; accounts</span><span aria-hidden="true">/</span><span aria-current="page">Pairing &amp; security</span></nav>
+<h1 class="docs-title">Pairing &amp; security</h1>
+<p class="docs-lead">How a device joins your account, the safeguards on pairing codes and device keys, and what to do if one is exposed.</p>
+
+<dl class="facts">
+<div><dt>Pairing code</dt><dd>6 digits, single use</dd></div>
+<div><dt>Code lifetime</dt><dd>10 minutes</dd></div>
+<div><dt>Wrong-code limit</dt><dd>10 per 15 minutes, per IP</dd></div>
+</dl>
+
+<section id="codes" class="doc-section">
+<h2>Pairing codes</h2>
+<p>When you add a device, the dashboard creates a 6-digit code. You enter it on the device's own page, and the device redeems it with the API. The code is the only thing that links a device to your account, so it is deliberately short-lived.</p>
+<div class="defs">
+<div class="def"><span class="def__k">Single use</span><span class="def__v">Marked as used the moment a device redeems it.</span></div>
+<div class="def"><span class="def__k">Expires</span><span class="def__v">After 10 minutes. Ask the dashboard for a new one.</span></div>
+<div class="def"><span class="def__k">Account-bound</span><span class="def__v">It can only add a device to the account that created it.</span></div>
+<div class="def"><span class="def__k">Guess-limited</span><span class="def__v">After 10 wrong codes in 15 minutes from one IP address, the API answers <code>429</code>. The proxy also limits pairing requests to 10 a minute per IP.</span></div>
+<div class="def"><span class="def__k">Carries nothing else</span><span class="def__v">No bin, name or location is attached to the code.</span></div>
+</div>
+</section>
+
+<section id="keys" class="doc-section">
+<h2>Device keys</h2>
+<p>Redeeming a code gives the device its own API key, which it sends with every upload to <code>POST /records</code>.</p>
+<div class="defs">
+<div class="def"><span class="def__k">Random</span><span class="def__v">32 random bytes, sent as 64 hex characters.</span></div>
+<div class="def"><span class="def__k">Returned once</span><span class="def__v">Sent to the device in the redeem response and never shown again, including to you.</span></div>
+<div class="def"><span class="def__k">Stored as a hash</span><span class="def__v">The API keeps only a SHA-256 hash, so the key can't be read back from the database.</span></div>
+<div class="def"><span class="def__k">Revoked on unpair</span><span class="def__v">Unpairing a device revokes its key at once. Later uploads get <code>401</code>.</span></div>
+</div>
+</section>
+
+<section id="steps" class="doc-section">
+<h2>Pairing step by step</h2>
+<ol class="steps-list">
+<li><span class="step-n">1</span><div class="steps-list__body"><span><span class="tag tag--good">Dashboard</span></span><p><strong>Add device.</strong> The dashboard shows a code and a 10-minute countdown. <code>POST /pairing/codes</code></p></div></li>
+<li><span class="step-n">2</span><div class="steps-list__body"><span><span class="tag tag--blue">Device page</span></span><p><strong>Enter the code.</strong> The device sends it with its hardware ID and receives its key. <code>POST /pairing/redeem</code></p></div></li>
+<li><span class="step-n">3</span><div class="steps-list__body"><span><span class="tag tag--good">Dashboard</span></span><p><strong>Check the hardware ID.</strong> The dashboard shows which device redeemed the code. Make sure it matches the ID on the device's page. <code>GET /pairing/codes/{code}</code></p></div></li>
+<li><span class="step-n">4</span><div class="steps-list__body"><span><span class="tag tag--good">Dashboard</span></span><p><strong>Confirm.</strong> Name the device and choose its bin. Until you do, its uploads are answered with <code>409</code>. <code>POST /devices/{id}/setup</code></p></div></li>
+</ol>
+<div class="callout"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0-18 0"/><path d="M12 9h.01"/><path d="M11 12h1v4h1"/></svg><p>If the hardware ID in step 3 isn't yours, don't confirm it. Remove the device and create a new code. An unconfirmed device can't add readings to your account.</p></div>
+</section>
+
+<section id="exposed" class="doc-section">
+<h2>If a code or key is exposed</h2>
+<div class="tbl-box">
+<table class="tbl">
+<thead><tr><th scope="col">What was exposed</th><th scope="col">What to do</th></tr></thead>
+<tbody>
+<tr><td class="tbl__key">A pairing code nobody has used</td><td>Nothing. Let it expire, or create a new one.</td></tr>
+<tr><td class="tbl__key">A pairing code someone else redeemed</td><td>Don't confirm the unknown hardware ID. Remove it and create a new code.</td></tr>
+<tr><td class="tbl__key">A device key</td><td>Unpair the device in the dashboard, then pair it again to get a new key.</td></tr>
+<tr><td class="tbl__key">Your password</td><td>Change it on the account page. Sessions that are already signed in end within 8 hours.</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section id="accounts" class="doc-section">
+<h2>Accounts and sessions</h2>
+<div class="defs">
+<div class="def"><span class="def__k">Passwords</span><span class="def__v">Hashed with Argon2id. A wrong email and a wrong password get the same <code>401</code> response.</span></div>
+<div class="def"><span class="def__k">Sign-in limit</span><span class="def__v">10 requests a minute per IP to <code>/auth/</code>, then <code>429</code>.</span></div>
+<div class="def"><span class="def__k">Sessions</span><span class="def__v">An 8-hour token, kept in a signed, HttpOnly cookie that page scripts can't read.</span></div>
+<div class="def"><span class="def__k">Transport</span><span class="def__v">HTTPS only, with HSTS on the website, the dashboard and the API.</span></div>
+<div class="def"><span class="def__k">Ownership</span><span class="def__v">Every bin, device, reading and alert query is filtered by owner. Anything you don't own returns <code>404</code>.</span></div>
+<div class="def"><span class="def__k">Deleting an account</span><span class="def__v">Deletes your bins, readings and alerts, unpairs your devices and revokes their keys.</span></div>
+</div>
+</section>
+
+<section id="open-data" class="doc-section">
+<h2>What the open data includes</h2>
+<p>Readings shared through the open data API are anonymised first: no names, emails, bin names, locations finer than country, or device identifiers. The <a href="/open-data/#fields">data dictionary</a> lists every field.</p>
+</section>
+
+<section id="report" class="doc-section">
+<h2>Reporting a vulnerability</h2>
+<p>Email [SECURITY CONTACT EMAIL] with the steps to reproduce it. Please don't disclose it publicly until it has been fixed.</p>
+</section>
+</main>
+
+<nav class="docs-toc" aria-label="On this page">
+<span class="docs-toc__title">On this page</span>
+<a href="#codes">Pairing codes</a>
+<a href="#keys">Device keys</a>
+<a href="#steps">Pairing step by step</a>
+<a href="#exposed">If a code or key is exposed</a>
+<a href="#accounts">Accounts and sessions</a>
+<a href="#open-data">What the open data includes</a>
+<a href="#report">Reporting a vulnerability</a>
+</nav>
+</div>
+
+<footer class="site-footer site-footer--compact">
+<div class="wrap wrap--wide footer-bottom">
+<span>© 2026 CompostIQ · An RMIT capstone project</span>
+<span class="footer-links"><a href="/docs/security/">Pairing &amp; security</a><a href="/docs/api/#changelog">Changelog</a><a href="/open-data/">Open data</a></span>
+</div>
+</footer>
+</body>
+</html>

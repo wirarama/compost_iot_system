@@ -1,0 +1,6 @@
+dash>=4.0,<5
+dash-mantine-components>=2.8,<3
+dash-iconify>=0.1.2
+plotly>=6.0,<7
+python-dotenv>=1.0
+requests>=2.31

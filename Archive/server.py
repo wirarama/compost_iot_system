@@ -30,6 +30,9 @@ import numpy as np
 # ─── KONFIGURASI ────────────────────────────────────────────
 DB_PATH   = "kompos_data.db"
 LOG_LEVEL = logging.INFO
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MOCK_DATA_PATH = os.path.join(BASE_DIR, "mock-data", "compostiq_mock_dataset.json")
+MOCK_SCHEMA_PATH = os.path.join(BASE_DIR, "mock-api-schema.openapi.json")
 
 # Definisi fase
 FASE_DEF = {
@@ -244,6 +247,44 @@ def compute_ikk(suhu, moisture, gas, fase):
 
 
 # ════════════════════════════════════════════════════════════
+# MOCK RESEARCH API HELPERS
+# ════════════════════════════════════════════════════════════
+def load_json_file(path):
+    with open(path, "r", encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def load_mock_dataset():
+    if not os.path.exists(MOCK_DATA_PATH):
+        return None
+    return load_json_file(MOCK_DATA_PATH)
+
+
+def apply_mock_filters(readings, args):
+    filtered = readings
+    if args.get("site_id"):
+        filtered = [r for r in filtered if r.get("site_id") == args["site_id"]]
+    if args.get("bin_id"):
+        filtered = [r for r in filtered if r.get("bin_id") == args["bin_id"]]
+    if args.get("stage_id") is not None:
+        stage_id = int(args["stage_id"])
+        filtered = [r for r in filtered if r.get("label", {}).get("stage_id") == stage_id]
+    if args.get("fault"):
+        fault = args["fault"].upper()
+        filtered = [
+            r for r in filtered
+            if any(flag.get("code") == fault for flag in r.get("faults", []))
+        ]
+    if args.get("from"):
+        filtered = [r for r in filtered if r.get("recorded_at", "") >= args["from"]]
+    if args.get("to"):
+        filtered = [r for r in filtered if r.get("recorded_at", "") <= args["to"]]
+
+    limit = min(int(args.get("limit", 250)), 5000)
+    return filtered[:limit]
+
+
+# ════════════════════════════════════════════════════════════
 # AGREGASI HOURLY
 # ════════════════════════════════════════════════════════════
 def update_hourly_aggregation(device_id, hour_bucket):
@@ -316,6 +357,95 @@ def update_hourly_aggregation(device_id, hour_bucket):
 @app.route("/api/health", methods=["GET"])
 def health():
     return jsonify({"status": "ok", "server": "KomposIoT", "version": "2.0"})
+
+
+@app.route("/api/v1/schema", methods=["GET"])
+def get_mock_schema():
+    """Draft OpenAPI schema for the CompostIQ mock/research API."""
+    if not os.path.exists(MOCK_SCHEMA_PATH):
+        return jsonify({"error": "mock schema file not found"}), 404
+    return jsonify(load_json_file(MOCK_SCHEMA_PATH))
+
+
+@app.route("/api/v1/mock/telemetry", methods=["GET"])
+@app.route("/api/v1/research/readings", methods=["GET"])
+def get_mock_telemetry():
+    """Read-only labelled mock telemetry for dashboard/API development."""
+    dataset = load_mock_dataset()
+    if dataset is None:
+        return jsonify({
+            "error": "mock dataset file not found",
+            "hint": "Run: python simulator/mock_data.py --output-dir mock-data",
+        }), 404
+
+    args = {
+        "site_id": request.args.get("site_id"),
+        "bin_id": request.args.get("bin_id"),
+        "stage_id": request.args.get("stage_id"),
+        "fault": request.args.get("fault"),
+        "from": request.args.get("from"),
+        "to": request.args.get("to"),
+        "limit": request.args.get("limit", 250),
+    }
+    readings = apply_mock_filters(dataset["readings"], args)
+    return jsonify({
+        "count": len(readings),
+        "data": readings,
+        "metadata": dataset.get("metadata", {}),
+    })
+
+
+@app.route("/api/v1/research/bins", methods=["GET"])
+def get_mock_bins():
+    """Site/bin metadata plus stage and fault definitions."""
+    dataset = load_mock_dataset()
+    if dataset is None:
+        return jsonify({
+            "error": "mock dataset file not found",
+            "hint": "Run: python simulator/mock_data.py --output-dir mock-data",
+        }), 404
+    return jsonify({
+        "sites": dataset.get("sites", []),
+        "bins": dataset.get("bins", []),
+        "summary": dataset.get("summary", []),
+        "stage_definitions": dataset.get("stage_definitions", []),
+        "fault_definitions": dataset.get("fault_definitions", {}),
+    })
+
+
+@app.route("/api/v1/ingest/batch", methods=["POST"])
+def ingest_batch_mock():
+    """Mock batched upload endpoint. Validates shape and echoes an ack."""
+    if not request.is_json:
+        return jsonify({"error": "Content-Type must be application/json"}), 400
+
+    payload = request.get_json(force=True)
+    missing = [key for key in ("device_id", "batch_id", "readings") if key not in payload]
+    if missing:
+        return jsonify({"error": f"Missing fields: {missing}"}), 400
+    if not isinstance(payload["readings"], list) or not payload["readings"]:
+        return jsonify({"error": "readings must be a non-empty array"}), 400
+
+    accepted = 0
+    rejected = []
+    for index, reading in enumerate(payload["readings"]):
+        telemetry = reading.get("telemetry", {})
+        if "recorded_at" not in reading or not isinstance(telemetry, dict):
+            rejected.append({"index": index, "reason": "recorded_at and telemetry are required"})
+            continue
+        if "temperature_c" not in telemetry or "moisture_pct" not in telemetry:
+            rejected.append({"index": index, "reason": "temperature_c and moisture_pct are required"})
+            continue
+        accepted += 1
+
+    return jsonify({
+        "status": "accepted" if accepted else "rejected",
+        "accepted_count": accepted,
+        "rejected_count": len(rejected),
+        "rejections": rejected,
+        "mock_persistence": False,
+        "message": "Mock endpoint only validates payload shape; it does not write to SQLite yet.",
+    }), 202 if accepted else 400
 
 
 @app.route("/api/data", methods=["POST"])

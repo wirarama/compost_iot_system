@@ -1,0 +1,27 @@
+[project]
+name = "compost-iot-system"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "dash>=4.4.1",
+    "dash-iconify>=0.1.2",
+    "dash-mantine-components>=2.8.0",
+    "gunicorn>=26.2.0",
+    "pandas>=3.0.5",
+    "plotly>=6.9.0",
+    "python-dotenv>=1.2.3",
+    "requests>=2.34.2",
+    "tzdata>=2026.3",
+    "uvicorn>=0.53.0",
+]
+
+[tool.uv.workspace]
+members = [
+    "backendAPI",
+]
+
+# editor type checking (Pylance/pyright): the API runs from inside backendAPI/,
+# so its local imports (database, config, routers) resolve from there
+[tool.pyright]
+extraPaths = ["backendAPI"]

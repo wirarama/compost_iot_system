@@ -1,0 +1,26 @@
+[project]
+name = "backendapi"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[standard]>=0.141.1",
+    "psycopg2-binary>=2.9.13",
+    "pwdlib[argon2]>=0.3.1",
+    "pydantic-settings>=2.6.1",
+    "pyjwt>=2.15.1",
+    "sqlalchemy>=2.0.52",
+    "uvicorn>=0.52.4",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
+[tool.pytest.ini_options]
+# run from backendAPI/:  uv run pytest
+# integration tests need the local database:  docker compose up -d
+pythonpath = ["."]
+testpaths = ["tests"]

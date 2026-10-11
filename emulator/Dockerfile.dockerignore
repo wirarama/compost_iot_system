@@ -1,0 +1,5 @@
+# The build context is the whole repo; send only what the image uses.
+*
+!simulator/composting_stages.py
+!emulator/*.py
+!emulator/static/

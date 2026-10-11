@@ -52,6 +52,63 @@ Dashboard opens at: `http://localhost:8501`
 | `GET`  | `/api/status` | Server status + SPRT state |
 | `DELETE` | `/api/reset` | Reset database (dev only) |
 
+### CompostIQ Mock Research API
+
+This branch also includes a simulator-backed mock API for the capstone research
+workflow. It keeps the older ESP8266 dashboard endpoints above, but adds a
+hardware-agnostic draft API for batched uploads and labelled research access.
+
+| Method | URL | Description |
+|--------|-----|-------------|
+| `GET` | `/api/v1/schema` | OpenAPI draft for the mock/research API |
+| `GET` | `/api/v1/mock/telemetry?limit=250` | Generated mock readings |
+| `GET` | `/api/v1/research/readings?bin_id=bin-unram-takakura-01` | Public labelled readings |
+| `GET` | `/api/v1/research/bins` | Site/bin metadata, stage definitions, fault definitions |
+| `POST` | `/api/v1/ingest/batch` | Mock batched device upload shape validation |
+
+Mock files:
+
+- `mock-api-schema.openapi.json` — endpoint/schema contract.
+- `mock-data/compostiq_mock_dataset.json` — nested research-style dataset.
+- `mock-data/compostiq_mock_readings.csv` — flat readings for notebooks/ML.
+- `simulator/mock_data.py` — deterministic generator built from `simulator/stages.py`.
+
+Regenerate mock data:
+
+```bash
+python3 simulator/mock_data.py --output-dir mock-data
+```
+
+Example batch upload body:
+
+```json
+{
+  "device_id": "cmpiq-unram-esp32-01",
+  "site_id": "site-unram-pilot",
+  "bin_id": "bin-unram-takakura-01",
+  "batch_id": "batch-2026-08-takakura-a",
+  "compost_context": {
+    "method": "takakura",
+    "bacterial_context": "Takakura starter culture with fermented organic scraps",
+    "feedstock": ["vegetable_scraps", "fruit_peels", "rice_residue", "dry_leaves"]
+  },
+  "readings": [
+    {
+      "recorded_at": "2026-08-18T00:00:00Z",
+      "sequence": 1,
+      "telemetry": {
+        "temperature_c": 31.4,
+        "moisture_pct": 63.2,
+        "oxygen_pct": 14.1,
+        "co2_pct": 1.2,
+        "nh3_relative": 0.09,
+        "mq135_composite_ppm": 122.5
+      }
+    }
+  ]
+}
+```
+
 > **Note:** The JSON field names below (`suhu`, `moisture`, `gas`, `fase_pred`,
 > `fase_nama`) are the literal keys the API expects and returns — they are part
 > of the wire format and are intentionally left unchanged. `suhu` = temperature,

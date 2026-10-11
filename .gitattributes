@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+# Shell scripts run inside Linux containers (e.g. database/apply_migrations.sh
+# in compose.yaml); Windows CRLF line endings break them, so always keep LF
+*.sh text eol=lf

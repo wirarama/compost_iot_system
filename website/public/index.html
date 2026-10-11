@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CompostIQ: better compost, backed by data</title>
+<meta name="description" content="A sensor in your compost bin, a dashboard that tells you when to turn, water or wait, and open data for researchers.">
+<link rel="canonical" href="https://compostiq.win/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CompostIQ">
+<meta property="og:title" content="CompostIQ: better compost, backed by data">
+<meta property="og:description" content="A sensor in your compost bin, a dashboard that tells you when to turn, water or wait, and open data for researchers.">
+<meta property="og:url" content="https://compostiq.win/">
+<meta name="theme-color" content="#3D6B09">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700..800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+<div class="wrap site-header__row">
+<a class="brand" href="/" aria-label="CompostIQ home">
+<span class="brand__mark"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 21c.5-4.5 2.5-8 7-10"/><path d="M9 18c6.218 0 10.5-3.288 11-12v-2h-4.014c-9 0-11.986 4-12 9c0 1 0 3 2 5h3z"/></svg></span>
+<span>Compost<span class="brand__accent">IQ</span></span>
+</a>
+<nav class="site-nav" aria-label="Main">
+<a href="/#how">How it works</a>
+<a href="/open-data/">Open data</a>
+<a href="/docs/">Docs</a>
+</nav>
+<div class="site-header__cta">
+<a class="btn btn--ghost hide-sm" href="https://dashboard.compostiq.win/login">Sign in</a>
+<a class="btn btn--primary" href="https://dashboard.compostiq.win/register">Create account</a>
+</div>
+</div>
+</header>
+
+<main id="main">
+
+<section class="hero">
+<div class="wrap hero__grid">
+<div class="hero__copy">
+<span class="eyebrow">Compost monitoring · Open data</span>
+<h1 class="display-1">Better compost, backed by data.</h1>
+<p class="lead">A small sensor in your bin reads temperature, moisture, oxygen, CO₂ and ammonia around the clock. CompostIQ works out which phase your pile is in and tells you when to turn it, water it or leave it be.</p>
+<div class="cluster hero__actions">
+<a class="btn btn--primary" href="https://dashboard.compostiq.win/register">Create an account <svg class="icon icon--sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="M13 18l6-6"/><path d="M13 6l6 6"/></svg></a>
+<a class="btn btn--ghost" href="/open-data/">Explore the open data</a>
+</div>
+<p class="small dim">An RMIT capstone project. Your readings are only ever shared anonymised.</p>
+</div>
+
+<div class="hero__visual">
+<div class="hero__backdrop" aria-hidden="true"></div>
+<figure class="card bin-card" aria-label="Example of a bin in the CompostIQ dashboard">
+<div class="bin-card__head">
+<div>
+<div class="bin-card__name">Backyard bin</div>
+<div class="tiny dim">Takakura · 1 sensor · updated 2 min ago</div>
+</div>
+<span class="tag tag--hot">Peak decomposition · day 10</span>
+</div>
+<div class="metric-grid">
+<div class="metric"><div class="metric__label"><svg class="icon icon--sm c-temp" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 13.5a4 4 0 1 0 4 0v-8.5a2 2 0 0 0-4 0v8.5"/><path d="M10 9l4 0"/></svg>Temperature</div><div class="metric__value">66.3<span class="metric__unit"> °C</span></div></div>
+<div class="metric"><div class="metric__label"><svg class="icon icon--sm c-moist" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7.502 19.423c2.602 2.105 6.395 2.105 8.996 0c2.602-2.105 3.262-5.708 1.566-8.546l-4.89-7.26c-.42-.625-1.287-.803-1.936-.397a1.376 1.376 0 0 0-.41.397l-4.893 7.26c-1.695 2.838-1.035 6.441 1.567 8.546z"/></svg>Moisture</div><div class="metric__value">49.1<span class="metric__unit"> %</span></div></div>
+<div class="metric"><div class="metric__label"><svg class="icon icon--sm c-oxy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 8h8.5a2.5 2.5 0 1 0-2.34-3.24"/><path d="M3 12h15.5a2.5 2.5 0 1 1-2.34 3.24"/><path d="M4 16h5.5a2.5 2.5 0 1 1-2.34 3.24"/></svg>Oxygen</div><div class="metric__value">1.1<span class="metric__unit"> %</span></div></div>
+<div class="metric"><div class="metric__label"><svg class="icon icon--sm c-co2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0-18 0"/><path d="M9 10a2 2 0 1 0 0 4"/><path d="M13 12a2 2 0 1 0 4 0a2 2 0 1 0-4 0"/></svg>CO₂</div><div class="metric__value">10.1<span class="metric__unit"> %</span></div></div>
+</div>
+<div>
+<div class="spark-head"><span>Temperature · last 10 days</span><span>- - 55 °C pathogen kill</span></div>
+<svg class="spark" viewBox="0 0 280 64" preserveAspectRatio="none" aria-hidden="true" focusable="false"><line class="spark__ref" x1="0" y1="21.3" x2="280" y2="21.3"/><polyline class="spark__line" points="0.0,55.7 7.2,58.4 14.4,49.3 21.5,46.4 28.7,45.3 35.9,44.8 43.1,40.7 50.3,33.4 57.4,36.7 64.6,32.3 71.8,34.6 79.0,32.0 86.2,29.0 93.3,22.7 100.5,23.3 107.7,20.9 114.9,21.4 122.1,18.0 129.2,12.1 136.4,12.0 143.6,18.8 150.8,17.9 157.9,18.0 165.1,15.8 172.3,14.4 179.5,14.4 186.7,17.4 193.8,11.4 201.0,15.2 208.2,12.1 215.4,12.8 222.6,11.4 229.7,12.0 236.9,13.4 244.1,14.3 251.3,8.7 258.5,10.8 265.6,8.0 272.8,5.6 280.0,5.3"/></svg>
+</div>
+<div class="stack stack--xs">
+<div class="alert-row"><svg class="icon icon--sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 9v4"/><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636-2.87l-8.106-13.536a1.914 1.914 0 0 0-3.274 0z"/><path d="M12 16h.01"/></svg><div class="alert-row__body"><div class="alert-row__title">Temperature is running high</div><div class="alert-row__text">Turn the pile to release heat.</div></div><span class="alert-row__action">Mark as done</span></div>
+<div class="alert-row"><svg class="icon icon--sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 9v4"/><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636-2.87l-8.106-13.536a1.914 1.914 0 0 0-3.274 0z"/><path d="M12 16h.01"/></svg><div class="alert-row__body"><div class="alert-row__title">Oxygen is low</div><div class="alert-row__text">Aerate the pile. It is going anaerobic.</div></div><span class="alert-row__action">Mark as done</span></div>
+</div>
+</figure>
+</div>
+</div>
+</section>
+
+<section class="section section--ruled">
+<div class="wrap stack stack--lg">
+<div class="split">
+<div class="split__main stack">
+<span class="eyebrow">What it watches</span>
+<h2 class="display-2">Know which phase your pile is in.</h2>
+</div>
+<p class="split__aside body-lg">A healthy pile warms up, peaks, cools and matures over about seven weeks. CompostIQ reads the temperature and its 24-hour trend to place your pile on that curve, so you are never guessing.</p>
+</div>
+<ol class="phase-list">
+<li class="card phase"><div class="phase__bar phase__bar--0"></div><div class="phase__body"><span class="phase__num">01</span><h3 class="phase__name">Early mesophilic</h3><p class="phase__text">Microbes wake up and the pile starts to warm.</p><p class="phase__range">28–45 °C · 1–3 days</p></div></li>
+<li class="card phase"><div class="phase__bar phase__bar--1"></div><div class="phase__body"><span class="phase__num">02</span><h3 class="phase__name">Active thermophilic</h3><p class="phase__text">Heat-loving bacteria take over and the pile heats fast.</p><p class="phase__range">45–60 °C · 2–4 days</p></div></li>
+<li class="card phase"><div class="phase__bar phase__bar--2"></div><div class="phase__body"><span class="phase__num">03</span><h3 class="phase__name">Peak decomposition</h3><p class="phase__text">The hottest stretch. Three days at 55 °C kills pathogens.</p><p class="phase__range">57–65 °C · 4–7 days</p></div></li>
+<li class="card phase"><div class="phase__bar phase__bar--3"></div><div class="phase__body"><span class="phase__num">04</span><h3 class="phase__name">Cooling</h3><p class="phase__text">Activity slows and the pile cools back down.</p><p class="phase__range">30–60 °C · 5–10 days</p></div></li>
+<li class="card phase"><div class="phase__bar phase__bar--4"></div><div class="phase__body"><span class="phase__num">05</span><h3 class="phase__name">Maturation</h3><p class="phase__text">Fungi and worms finish the job. Nearly ready to use.</p><p class="phase__range">28–32 °C · 24–36 days</p></div></li>
+</ol>
+<ul class="sensor-list">
+<li class="sensor"><svg class="icon c-temp" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 13.5a4 4 0 1 0 4 0v-8.5a2 2 0 0 0-4 0v8.5"/><path d="M10 9l4 0"/></svg><span><strong>Temperature</strong>Where the pile is in its cycle</span></li>
+<li class="sensor"><svg class="icon c-moist" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7.502 19.423c2.602 2.105 6.395 2.105 8.996 0c2.602-2.105 3.262-5.708 1.566-8.546l-4.89-7.26c-.42-.625-1.287-.803-1.936-.397a1.376 1.376 0 0 0-.41.397l-4.893 7.26c-1.695 2.838-1.035 6.441 1.567 8.546z"/></svg><span><strong>Moisture</strong>Too dry stalls it, too wet sours it</span></li>
+<li class="sensor"><svg class="icon c-oxy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 8h8.5a2.5 2.5 0 1 0-2.34-3.24"/><path d="M3 12h15.5a2.5 2.5 0 1 1-2.34 3.24"/><path d="M4 16h5.5a2.5 2.5 0 1 1-2.34 3.24"/></svg><span><strong>Oxygen</strong>Below 2 % it turns anaerobic</span></li>
+<li class="sensor"><svg class="icon c-co2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0-18 0"/><path d="M9 10a2 2 0 1 0 0 4"/><path d="M13 12a2 2 0 1 0 4 0a2 2 0 1 0-4 0"/></svg><span><strong>CO₂</strong>How hard the microbes are working</span></li>
+<li class="sensor"><svg class="icon c-nh3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3c-1.5 3-5 5.5-5 9.5a5 5 0 0 0 10 0c0-4-3.5-6.5-5-9.5z"/><path d="M10 14h4"/></svg><span><strong>Ammonia</strong>Too much nitrogen in the mix</span></li>
+</ul>
+</div>
+</section>
+
+<section id="how" class="section section--tint">
+<div class="wrap stack stack--lg">
+<div class="stack">
+<span class="eyebrow">How it works</span>
+<h2 class="display-2">Plug in, pair, and let the pile talk.</h2>
+</div>
+<ol class="tiles tiles--md">
+<li class="card step-card">
+<div class="step-card__top"><span class="step-card__num">1</span><span class="icon-badge"><svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 6a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-12a1 1 0 0 1-1-1z"/><path d="M9 9h6v6h-6z"/><path d="M3 10h2"/><path d="M3 14h2"/><path d="M10 3v2"/><path d="M14 3v2"/><path d="M21 10h-2"/><path d="M21 14h-2"/><path d="M14 21v-2"/><path d="M10 21v-2"/></svg></span></div>
+<h3 class="title-lg">Put a sensor in the bin</h3>
+<p>Push the probe into the middle of the pile and power it up. It joins your Wi-Fi and starts reading straight away.</p>
+</li>
+<li class="card step-card">
+<div class="step-card__top"><span class="step-card__num">2</span><span class="icon-badge"><svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 15l6-6"/><path d="M11 6l.463-.536a5 5 0 0 1 7.071 7.072l-.534.464"/><path d="M13 18l-.397.534a5.068 5.068 0 0 1-7.127 0a4.972 4.972 0 0 1 0-7.071l.524-.463"/></svg></span></div>
+<h3 class="title-lg">Pair it with a code</h3>
+<p>Your dashboard gives you a 6-digit code. Type it on the device's own page, then confirm the device and pick its bin.</p>
+<a class="link-arrow" href="/docs/security/">How pairing works <svg class="icon icon--sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="M13 18l6-6"/><path d="M13 6l6 6"/></svg></a>
+</li>
+<li class="card step-card">
+<div class="step-card__top"><span class="step-card__num">3</span><span class="icon-badge"><svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 19l16 0"/><path d="M4 15l4-6l4 2l4-5l4 4"/></svg></span></div>
+<h3 class="title-lg">Get told when to act</h3>
+<p>Watch the live readings in your dashboard. When something drifts, an alert tells you whether to turn, water or add browns, and clears once the pile recovers.</p>
+</li>
+</ol>
+</div>
+</section>
+
+<section class="section">
+<div class="wrap alerts-layout">
+<div class="alerts-layout__intro stack">
+<span class="eyebrow">Alerts</span>
+<h2 class="display-3">It tells you what to do, not just what it measured.</h2>
+<p class="body-lg">When a reading drifts out of range, CompostIQ raises an alert with the fix. Mark it done and a short “stabilising” note takes its place until the readings settle.</p>
+</div>
+<ul class="card rule-list">
+<li class="rule"><span class="rule__cond">Temperature &gt; 65 °C</span><span class="rule__action">Turn the pile to release heat</span><span class="tag tag--hot">High</span></li>
+<li class="rule"><span class="rule__cond">Oxygen &lt; 2 %</span><span class="rule__action">Turn or aerate. It is going anaerobic</span><span class="tag tag--hot">High</span></li>
+<li class="rule"><span class="rule__cond">Moisture &lt; 40 %</span><span class="rule__action">Add water, about 3 L per 100 L of material</span><span class="tag tag--warn">Medium</span></li>
+<li class="rule"><span class="rule__cond">Moisture &gt; 65 %</span><span class="rule__action">Mix in dry browns: leaves, cardboard</span><span class="tag tag--warn">Medium</span></li>
+<li class="rule"><span class="rule__cond">No reading for 2 intervals</span><span class="rule__action">Check the device's power and Wi-Fi</span><span class="tag tag--warn">Medium</span></li>
+<li class="rule"><span class="rule__cond">≥ 55 °C for 3 days</span><span class="rule__action">Pathogen-kill temperature reached</span><span class="tag tag--good">Good news</span></li>
+</ul>
+</div>
+</section>
+
+<section class="section section--dark">
+<div class="wrap stack stack--lg">
+<div class="split">
+<div class="split__main stack">
+<span class="eyebrow">Open data</span>
+<h2 class="display-2">Every reading, anonymised and open to researchers.</h2>
+<p class="body-lg">Readings from CompostIQ bins feed a public dataset. Names, locations and device IDs are stripped out. What is left is the science: how real piles heat up, dry out and breathe.</p>
+</div>
+<div class="cluster">
+<a class="btn btn--light" href="/docs/">Get started in 5 minutes</a>
+<a class="btn btn--outline-dark" href="/docs/api/">API reference</a>
+</div>
+</div>
+
+<!-- Filled in by /assets/site.js from the API (or the preview snapshot). -->
+<div class="stack stack--sm">
+<div class="stat-row">
+<div class="card card--dark stat"><div class="stat__value" data-stat="bins">–</div><div class="stat__label">Bins reporting</div></div>
+<div class="card card--dark stat"><div class="stat__value" data-stat="countries">–</div><div class="stat__label">Countries</div></div>
+<div class="card card--dark stat"><div class="stat__value" data-stat="active_devices">–</div><div class="stat__label">Active devices</div></div>
+<div class="card card--dark stat"><div class="stat__value" data-stat="readings_24h">–</div><div class="stat__label">Readings in the last 24 h</div></div>
+</div>
+<p class="note-on-dark" data-figures-note>Figures come from the CompostIQ API.</p>
+</div>
+
+<div class="tiles">
+<figure class="card card--dark chart-card">
+<figcaption class="chart-card__head"><span class="chart-card__title">Temperature, daily mean</span><span class="legend"><span class="legend__swatch legend__swatch--temp"></span>All bins · <span data-trend-range>last 30 days</span></span></figcaption>
+<div class="chart-slot" data-chart="temperature"></div>
+</figure>
+<figure class="card card--dark chart-card">
+<figcaption class="chart-card__head"><span class="chart-card__title">Moisture, daily mean</span><span class="legend"><span class="legend__swatch legend__swatch--moist"></span>All bins · <span data-trend-range>last 30 days</span></span></figcaption>
+<div class="chart-slot" data-chart="moisture"></div>
+</figure>
+</div>
+
+<div class="card card--dark country-card">
+<h3 class="title-md">Where the bins are</h3>
+<p class="small note-on-dark">Country level only. Every country with a bin is shown, nothing finer.</p>
+<ul class="country-list" data-countries></ul>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="wrap">
+<div class="cta-band">
+<div class="stack stack--sm">
+<h2 class="display-3">Start watching your pile.</h2>
+<p>Create an account, pair a sensor, and see your first reading in minutes.</p>
+</div>
+<div class="cluster">
+<a class="btn btn--light" href="https://dashboard.compostiq.win/register">Create an account</a>
+<a class="btn btn--on-green" href="https://dashboard.compostiq.win/login">Sign in</a>
+</div>
+</div>
+</div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+<div class="wrap">
+<div class="footer-top">
+<div class="footer-brand">
+<span class="footer-brand__name">Compost<span>IQ</span></span>
+<p>Sensors, alerts and open data for better compost.</p>
+</div>
+<nav class="footer-col" aria-label="Product">
+<span class="footer-col__title">Product</span>
+<a href="/#how">How it works</a>
+<a href="https://dashboard.compostiq.win/login">Sign in</a>
+<a href="https://dashboard.compostiq.win/register">Create an account</a>
+</nav>
+<nav class="footer-col" aria-label="Research">
+<span class="footer-col__title">Research</span>
+<a href="/open-data/">Open data</a>
+<a href="/open-data/#downloads">Download CSV</a>
+</nav>
+<nav class="footer-col" aria-label="Docs">
+<span class="footer-col__title">Docs</span>
+<a href="/docs/">Quickstart</a>
+<a href="/docs/api/">API reference</a>
+<a href="/docs/security/">Pairing &amp; security</a>
+</nav>
+</div>
+<div class="footer-bottom">
+<span>© 2026 CompostIQ · An RMIT capstone project</span>
+<span>Open data licence: [LICENCE]</span>
+</div>
+</div>
+</footer>
+</body>
+</html>

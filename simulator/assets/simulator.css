@@ -1,0 +1,97 @@
+/* Styling that props alone cannot reach. Every colour goes through a Mantine
+   CSS variable so light and dark stay in step with the theme automatically. */
+
+html,
+body,
+#react-entry-point {
+  height: 100%;
+}
+
+/* Map Dash 4 core-component tokens onto the Mantine theme, so any dcc.*
+   control dropped into this app follows the colour scheme.
+   (from the DMC docs, "Dash 4 Components") */
+.dmc {
+  --Dash-Stroke-Strong: var(--mantine-color-default-border);
+  --Dash-Stroke-Weak: var(--mantine-color-disabled);
+  --Dash-Fill-Interactive-Strong: var(--mantine-primary-color-filled);
+  --Dash-Fill-Inverse-Strong: var(--mantine-color-body);
+  --Dash-Text-Primary: var(--mantine-color-text);
+  --Dash-Text-Strong: var(--mantine-color-text);
+  --Dash-Text-Disabled: var(--mantine-color-dimmed);
+  --Dash-Text-Weak: var(--mantine-color-dimmed);
+}
+
+:root[data-mantine-color-scheme="dark"] .dmc {
+  --Dash-Fill-Inverse-Strong: var(--mantine-color-dark-6);
+  --Dash-Fill-Weak: rgba(255, 255, 255, 0.06);
+  --Dash-Fill-Primary-Hover: rgba(255, 255, 255, 0.08);
+  --Dash-Fill-Primary-Active: rgba(255, 255, 255, 0.12);
+  --Dash-Fill-Disabled: rgba(255, 255, 255, 0.15);
+}
+
+/* Inline icons: an SVG used as a mask so the glyph inherits currentColor.
+   Keeps the app free of an icon package and of any network request. */
+.sim-icon {
+  display: inline-block;
+  flex: none;
+  background-color: currentColor;
+  -webkit-mask: center / contain no-repeat;
+  mask: center / contain no-repeat;
+}
+
+/* Stage legend swatch and the accent dot on each indicator card. */
+.sim-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.sim-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* The stage colour strip that sits on the left of every run tab. */
+.sim-strip {
+  display: flex;
+  width: 4px;
+  height: 26px;
+  border-radius: 2px;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+.sim-strip-block {
+  flex: 1;
+}
+
+/* Generate button sits below the scrolling settings, visually separated. */
+.sim-navbar-footer {
+  border-top: 1px solid var(--mantine-color-default-border);
+  background-color: var(--mantine-color-body);
+}
+
+.sim-run-tabs .mantine-Tabs-tab {
+  padding-block: var(--mantine-spacing-xs);
+}
+
+.sim-stat-card {
+  transition: border-color 120ms ease;
+}
+
+.sim-stat-card:hover {
+  border-color: var(--mantine-primary-color-filled);
+}
+
+.sim-empty {
+  border-style: dashed;
+  background-color: transparent;
+}
+
+/* Plotly draws its own white background by default; let the card show through. */
+.js-plotly-plot .plotly .modebar {
+  background: transparent !important;
+}

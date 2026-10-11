@@ -1,0 +1,40 @@
+/* Styling that Mantine props cannot reach. Every colour goes through a
+   Mantine CSS variable so light and dark stay in step with the theme. */
+
+/* Map Dash 4 core-component tokens onto the Mantine theme, so any dcc.*
+   control (e.g. dcc.Graph's mode bar) follows the colour scheme.
+   Same mapping as simulator/assets/simulator.css. */
+.dmc {
+  --Dash-Stroke-Strong: var(--mantine-color-default-border);
+  --Dash-Stroke-Weak: var(--mantine-color-disabled);
+  --Dash-Fill-Interactive-Strong: var(--mantine-primary-color-filled);
+  --Dash-Fill-Inverse-Strong: var(--mantine-color-body);
+  --Dash-Text-Primary: var(--mantine-color-text);
+  --Dash-Text-Strong: var(--mantine-color-text);
+  --Dash-Text-Disabled: var(--mantine-color-dimmed);
+  --Dash-Text-Weak: var(--mantine-color-dimmed);
+}
+
+:root[data-mantine-color-scheme="dark"] .dmc {
+  --Dash-Fill-Inverse-Strong: var(--mantine-color-dark-6);
+  --Dash-Fill-Weak: rgba(255, 255, 255, 0.06);
+  --Dash-Fill-Primary-Hover: rgba(255, 255, 255, 0.08);
+  --Dash-Fill-Primary-Active: rgba(255, 255, 255, 0.12);
+  --Dash-Fill-Disabled: rgba(255, 255, 255, 0.15);
+}
+
+/* Cards that link somewhere lift slightly on hover. */
+.ciq-card-link {
+  display: block;
+  height: 100%;
+}
+
+.ciq-card-link > .mantine-Card-root {
+  height: 100%;
+  transition: border-color 120ms ease, transform 120ms ease;
+}
+
+.ciq-card-link:hover > .mantine-Card-root {
+  border-color: var(--mantine-primary-color-filled);
+  transform: translateY(-1px);
+}

@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quickstart · CompostIQ docs</title>
+<meta name="description" content="Make your first request to the CompostIQ open API in about five minutes. No account or key needed.">
+<link rel="canonical" href="https://compostiq.win/docs/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CompostIQ">
+<meta property="og:title" content="Quickstart · CompostIQ docs">
+<meta property="og:description" content="Make your first request to the CompostIQ open API in about five minutes. No account or key needed.">
+<meta property="og:url" content="https://compostiq.win/docs/">
+<meta name="theme-color" content="#3D6B09">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700..800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+<div class="wrap wrap--wide site-header__row">
+<a class="brand" href="/" aria-label="CompostIQ home">
+<span class="brand__mark"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 21c.5-4.5 2.5-8 7-10"/><path d="M9 18c6.218 0 10.5-3.288 11-12v-2h-4.014c-9 0-11.986 4-12 9c0 1 0 3 2 5h3z"/></svg></span>
+<span>Compost<span class="brand__accent">IQ</span> <span class="brand__suffix">docs</span></span>
+</a>
+<nav class="site-nav" aria-label="Main">
+<a href="/#how">How it works</a>
+<a href="/open-data/">Open data</a>
+<a href="/docs/" aria-current="true">Docs</a>
+</nav>
+<div class="site-header__cta">
+<a class="btn btn--ghost hide-sm" href="https://dashboard.compostiq.win/login">Sign in</a>
+<a class="btn btn--primary" href="https://dashboard.compostiq.win/register">Create account</a>
+</div>
+</div>
+</header>
+
+<div class="wrap wrap--wide docs-layout">
+
+<nav class="docs-mobile" aria-label="Documentation">
+<a href="/docs/" aria-current="page">Quickstart</a>
+<a href="/docs/api/">API reference</a>
+<a href="/open-data/#fields">Data dictionary</a>
+<a href="/docs/security/">Pairing &amp; security</a>
+</nav>
+
+<nav class="docs-side" aria-label="Documentation">
+<div>
+<h2>Get started</h2>
+<a href="/docs/" aria-current="page">Quickstart</a>
+<a href="/open-data/#fields">Data dictionary</a>
+<a href="/docs/api/#errors">Rate limits &amp; errors</a>
+</div>
+<div>
+<h2>Public statistics</h2>
+<a href="/docs/api/#public-stats"><span class="verb">GET</span>/public/stats</a>
+<a href="/docs/api/#public-bins-by-country"><span class="verb">GET</span>/public/bins-by-country</a>
+<a href="/docs/api/#public-trends"><span class="verb">GET</span>/public/trends</a>
+</div>
+<div>
+<h2>Research data</h2>
+<a href="/docs/api/"><span class="verb">GET</span>/research/readings</a>
+<a href="/docs/api/#research-bins"><span class="verb">GET</span>/research/bins</a>
+<a href="/docs/api/#research-stages"><span class="verb">GET</span>/research/stages</a>
+</div>
+<div>
+<h2>Devices &amp; accounts</h2>
+<a href="/docs/security/">Pairing &amp; security</a>
+</div>
+<div>
+<h2>Resources</h2>
+<a href="/open-data/#downloads">Bulk downloads</a>
+<a href="https://api.compostiq.win/openapi.json">OpenAPI spec (JSON)</a>
+<a href="/docs/api/#changelog">Changelog</a>
+</div>
+</nav>
+
+<main id="main" class="docs-main prose">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/docs/">Docs</a><span aria-hidden="true">/</span><span>Get started</span><span aria-hidden="true">/</span><span aria-current="page">Quickstart</span></nav>
+<h1 class="docs-title">Quickstart</h1>
+<p class="docs-lead">Make your first request to the CompostIQ open API in about five minutes. You don't need an account or a key.</p>
+
+<dl class="facts">
+<div><dt>Base URL</dt><dd class="mono">https://api.compostiq.win</dd></div>
+<div><dt>Format</dt><dd>JSON, times in UTC</dd></div>
+<div><dt>Rate limit</dt><dd>60 requests a minute per IP</dd></div>
+</dl>
+
+<section id="step-1" class="doc-section">
+<div class="step-head"><span class="step-n">1</span><h2>Check the API is up</h2></div>
+<p>Ask for the headline numbers. If this works, everything else will too.</p>
+<div class="codebox">
+<div class="codebox__head"><span>Terminal</span><button type="button" class="copy" data-copy hidden>Copy</button></div>
+<pre class="code"><span class="t-p">$</span> curl https://api.compostiq.win/public/stats</pre>
+</div>
+<div class="codebox">
+<div class="codebox__head"><span>Response · 200</span></div>
+<pre class="code">{
+  <span class="t-k">"bins"</span>: <span class="t-n">3</span>,
+  <span class="t-k">"countries"</span>: <span class="t-n">1</span>,
+  <span class="t-k">"methods"</span>: <span class="t-n">3</span>,
+  <span class="t-k">"active_devices"</span>: <span class="t-n">3</span>,
+  <span class="t-k">"readings_total"</span>: <span class="t-n">568</span>,
+  <span class="t-k">"readings_24h"</span>: <span class="t-n">4</span>,
+  <span class="t-k">"first_reading_at"</span>: <span class="t-s">"2026-08-18T00:00:00Z"</span>,
+  <span class="t-k">"last_reading_at"</span>: <span class="t-s">"2026-10-06T20:00:00Z"</span>,
+  <span class="t-k">"updated_at"</span>: <span class="t-s">"2026-10-06T20:00:00Z"</span>
+}</pre>
+</div>
+</section>
+
+<section id="step-2" class="doc-section">
+<div class="step-head"><span class="step-n">2</span><h2>Fetch some readings</h2></div>
+<p>Readings come one row per bin per hour, oldest first. Filter them with query parameters; these three are the ones you'll use most.</p>
+<div class="codebox">
+<div class="codebox__head"><span>Terminal</span><button type="button" class="copy" data-copy hidden>Copy</button></div>
+<pre class="code"><span class="t-p">$</span> curl -G https://api.compostiq.win/research/readings \
+    -d method=takakura \
+    -d from=2026-08-18T00:00:00Z \
+    -d limit=100</pre>
+</div>
+<div class="defs">
+<div class="def"><span class="def__k def__k--narrow"><code>method</code></span><span class="def__v"><code>takakura</code>, <code>bokashi</code> or <code>aerated_static_pile</code></span></div>
+<div class="def"><span class="def__k def__k--narrow"><code>from</code></span><span class="def__v">Earliest hour to include, ISO 8601 in UTC</span></div>
+<div class="def"><span class="def__k def__k--narrow"><code>limit</code></span><span class="def__v">Rows per page. Default 500, maximum 5000</span></div>
+</div>
+<p class="small">Every filter is in the <a href="/docs/api/">API reference</a>.</p>
+</section>
+
+<section id="step-3" class="doc-section">
+<div class="step-head"><span class="step-n">3</span><h2>Load them into pandas</h2></div>
+<p>The <code>items</code> array drops straight into a DataFrame.</p>
+<div class="codebox">
+<div class="codebox__head"><span>Python</span><button type="button" class="copy" data-copy hidden>Copy</button></div>
+<pre class="code"><span class="t-kw">import</span> pandas <span class="t-kw">as</span> pd
+<span class="t-kw">import</span> requests
+
+resp = requests.get(
+    <span class="t-s">"https://api.compostiq.win/research/readings"</span>,
+    params={<span class="t-s">"method"</span>: <span class="t-s">"takakura"</span>, <span class="t-s">"limit"</span>: <span class="t-n">1000</span>},
+    timeout=<span class="t-n">30</span>,
+)
+resp.raise_for_status()
+
+df = pd.DataFrame(resp.json()[<span class="t-s">"items"</span>])
+df[<span class="t-s">"recorded_at"</span>] = pd.to_datetime(df[<span class="t-s">"recorded_at"</span>])
+print(df[[<span class="t-s">"recorded_at"</span>, <span class="t-s">"temperature_c"</span>, <span class="t-s">"stage_name"</span>]].head())</pre>
+</div>
+</section>
+
+<section id="step-4" class="doc-section">
+<div class="step-head"><span class="step-n">4</span><h2>Page through everything</h2></div>
+<p>When there are more rows, the response carries a <code>next_cursor</code>. Send it back as <code>cursor</code> until it comes back <code>null</code>.</p>
+<div class="codebox">
+<div class="codebox__head"><span>Python</span><button type="button" class="copy" data-copy hidden>Copy</button></div>
+<pre class="code">url = <span class="t-s">"https://api.compostiq.win/research/readings"</span>
+params = {<span class="t-s">"limit"</span>: <span class="t-n">5000</span>}
+rows = []
+
+<span class="t-kw">while</span> <span class="t-kw">True</span>:
+    page = requests.get(url, params=params, timeout=<span class="t-n">30</span>).json()
+    rows += page[<span class="t-s">"items"</span>]
+    <span class="t-kw">if</span> <span class="t-kw">not</span> page[<span class="t-s">"next_cursor"</span>]:
+        <span class="t-kw">break</span>
+    params[<span class="t-s">"cursor"</span>] = page[<span class="t-s">"next_cursor"</span>]</pre>
+</div>
+<div class="callout"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0-18 0"/><path d="M12 9h.01"/><path d="M11 12h1v4h1"/></svg><p>Pulling the whole dataset? The bulk file below is faster and doesn't count against your rate limit.</p></div>
+</section>
+
+<section id="step-5" class="doc-section">
+<div class="step-head"><span class="step-n">5</span><h2>Or download a file</h2></div>
+<p>A snapshot of the whole dataset as CSV and JSON, with the same fields as the API. For now it holds the simulated preview data.</p>
+<div class="tiles tiles--tight">
+<a class="card download" href="/downloads/compostiq-readings.csv" download><span class="icon-badge"><svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/><path d="M7 11l5 5l5-5"/><path d="M12 4l0 12"/></svg></span><span class="download__meta"><strong>compostiq-readings.csv</strong><span>57.1 KB</span></span></a>
+<a class="card download" href="/downloads/compostiq-readings.json" download><span class="icon-badge"><svg class="icon icon--lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/><path d="M7 11l5 5l5-5"/><path d="M12 4l0 12"/></svg></span><span class="download__meta"><strong>compostiq-readings.json</strong><span>157.5 KB</span></span></a>
+</div>
+</section>
+
+<section id="step-6" class="doc-section">
+<div class="step-head"><span class="step-n">6</span><h2>Cite the data</h2></div>
+<p>The data is free to use with credit. The <a href="/open-data/#cite">open data page</a> has the licence and a ready-made citation.</p>
+</section>
+
+<section class="doc-section doc-section--next">
+<h2>Next steps</h2>
+<div class="tiles tiles--sm tiles--tight">
+<a class="card card-link" href="/docs/api/"><strong>API reference</strong><span>Every parameter, field and error.</span></a>
+<a class="card card-link" href="/open-data/#fields"><strong>Data dictionary</strong><span>What each field means, and its caveats.</span></a>
+<a class="card card-link" href="/docs/api/#errors"><strong>Rate limits &amp; errors</strong><span>What a 429 means and how to back off.</span></a>
+</div>
+</section>
+</main>
+
+<nav class="docs-toc" aria-label="On this page">
+<span class="docs-toc__title">On this page</span>
+<a href="#step-1">Check the API is up</a>
+<a href="#step-2">Fetch some readings</a>
+<a href="#step-3">Load them into pandas</a>
+<a href="#step-4">Page through everything</a>
+<a href="#step-5">Or download a file</a>
+<a href="#step-6">Cite the data</a>
+</nav>
+</div>
+
+<footer class="site-footer site-footer--compact">
+<div class="wrap wrap--wide footer-bottom">
+<span>© 2026 CompostIQ · An RMIT capstone project</span>
+<span class="footer-links"><a href="/docs/security/">Pairing &amp; security</a><a href="/docs/api/#changelog">Changelog</a><a href="/open-data/">Open data</a></span>
+</div>
+</footer>
+</body>
+</html>

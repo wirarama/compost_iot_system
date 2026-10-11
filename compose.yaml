@@ -1,0 +1,36 @@
+# Local development database for CompostIQ.
+#
+#   docker compose up -d          # start (first start loads schema, migrations, dev seed)
+#   docker compose down -v        # stop and wipe, so the next start reloads all three
+#
+# The init scripts only run on an empty volume. To apply a new migration to a
+# database you want to keep, run it by hand:
+#   docker compose exec -T db psql -U compostiq -d compostiq < database/migrations/<file>.sql
+#
+# Bound to 127.0.0.1 only. The credentials are for local development and
+# match backendAPI/.env.example. The VM uses its own PostgreSQL (see
+# deploy/pm2/README.md), not this file.
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: compostiq
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: compostiq
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # run in name order on the first start only (empty volume)
+      - ./database/CompostIQ_PostgreSQL_schema_fix1.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./database/apply_migrations.sh:/docker-entrypoint-initdb.d/02_migrations.sh:ro
+      - ./database/seed_dev.sql:/docker-entrypoint-initdb.d/03_seed_dev.sql:ro
+      - ./database/migrations:/migrations:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U compostiq -d compostiq"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:

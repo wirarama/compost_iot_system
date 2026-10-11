@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compostiq.local/schemas/compostiq_mock_dataset.schema.json",
+  "title": "CompostIQ Mock Sensor Dataset",
+  "description": "One record per simulated sensor reading, produced by simulator/generator.py.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "timestamp": {
+        "type": "string",
+        "format": "date-time",
+        "description": "When this reading was taken (ISO 8601)."
+      },
+      "stage_id": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 4,
+        "description": "Matches the 'id' field in composting_stages.py STAGES."
+      },
+      "stage_name": {
+        "type": "string",
+        "enum": [
+          "Early Mesophilic",
+          "Active Thermophilic",
+          "Peak Decomposition",
+          "Cooling",
+          "Maturation"
+        ]
+      },
+      "temperature_c": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "description": "Pile temperature in Celsius."
+      },
+      "moisture_pct": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "description": "Moisture content, percent by weight."
+      },
+      "o2_pct": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 25,
+        "description": "Oxygen concentration, percent."
+      },
+      "co2_pct": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 15,
+        "description": "Carbon dioxide concentration, percent."
+      },
+      "nh3_relative": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1,
+        "description": "Ammonia off-gassing intensity on a 0.0-1.0 relative scale, not ppm. See composting_stages.py for why."
+      }
+    },
+    "required": [
+      "timestamp",
+      "stage_id",
+      "stage_name",
+      "temperature_c",
+      "moisture_pct",
+      "o2_pct",
+      "co2_pct",
+      "nh3_relative"
+    ],
+    "additionalProperties": false
+  }
+}

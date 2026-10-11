@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CompostIQ Device</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%236db223' d='M5 21c.5-4.5 2.5-8 7-10-3.5 2.5-5 5.5-5.5 10H5zm2.5-6C6 9 10 3 20 3c0 10-6 14-12 12.5z'/%3E%3C/svg%3E">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 21c.5-4.5 2.5-8 7-10-3.5 2.5-5 5.5-5.5 10H5zm2.5-6C6 9 10 3 20 3c0 10-6 14-12 12.5z"/>
+      </svg>
+      <div>
+        <h1>CompostIQ device</h1>
+        <p class="dim" id="model">Starting…</p>
+      </div>
+    </div>
+    <span class="pill" id="pill" data-tone="dim">Connecting…</span>
+  </header>
+
+  <main class="grid">
+    <!-- pairing: three blocks, one shown at a time, so polling never clears a half-typed code -->
+    <section class="card span-2" aria-labelledby="pairing-title">
+      <div id="pair-unpaired" hidden>
+        <h2 id="pairing-title">Pair with your CompostIQ account</h2>
+        <p class="notice" id="pair-notice" hidden></p>
+        <ol class="steps">
+          <li>In the CompostIQ dashboard, open <b>Devices → Add device</b> and press <b>Pair</b>.</li>
+          <li>Enter the 6-digit code it shows below. Codes expire after a few minutes.</li>
+          <li>Back in the dashboard, confirm the registration and give the device a name and a bin.</li>
+        </ol>
+        <form id="pair-form" class="pair-form" autocomplete="off">
+          <label class="sr-only" for="code">Pairing code</label>
+          <input id="code" name="code" class="code-input" inputmode="numeric" autocomplete="one-time-code"
+                 pattern="[0-9]{6}" maxlength="7" placeholder="000000" required aria-describedby="pair-error">
+          <button type="submit" class="btn primary" id="pair-button">Pair device</button>
+        </form>
+        <p class="error" id="pair-error" role="alert"></p>
+        <p class="dim small">This device: <code id="uid-unpaired"></code> · pairs with <code id="pair-url"></code></p>
+      </div>
+
+      <div id="pair-paired" hidden>
+        <div class="card-head">
+          <h2><span class="check" aria-hidden="true">✓</span> Paired</h2>
+          <button type="button" class="btn danger-quiet" data-reset>Factory reset</button>
+        </div>
+        <div class="notice" id="setup-notice" hidden>
+          <b>One more step, in the dashboard.</b> Confirm the registration, then give this device a
+          name and a bin. Check the dashboard shows hardware ID <code id="uid-setup"></code>.
+          Readings start as soon as it's set up.
+        </div>
+        <dl class="facts">
+          <div><dt>Cloud device ID</dt><dd><code id="device-id"></code></dd></div>
+          <div><dt>Hardware ID</dt><dd><code id="uid-paired"></code></dd></div>
+          <div><dt>Paired</dt><dd id="paired-at"></dd></div>
+          <div><dt>API key</dt><dd><code id="key-hint"></code></dd></div>
+        </dl>
+      </div>
+
+      <div id="pair-other" hidden>
+        <div class="card-head">
+          <h2>Paired with a different cloud</h2>
+          <button type="button" class="btn danger-quiet" data-reset>Factory reset</button>
+        </div>
+        <p>This device was paired with <code id="other-cloud"></code>, but it is now set to use
+          <code id="this-cloud"></code>. It won't send its key to a cloud that didn't issue it,
+          so nothing is being uploaded. Factory reset it to pair with the new cloud.</p>
+      </div>
+    </section>
+
+    <section class="card span-2" aria-labelledby="sensors-title">
+      <div class="card-head">
+        <h2 id="sensors-title">Sensors</h2>
+        <span class="dim small" id="last-reading"></span>
+      </div>
+      <div class="tiles" id="tiles"></div>
+
+      <div class="truth">
+        <div class="truth-head">
+          <span class="stage-chip" id="stage-chip"></span>
+          <span class="small" id="stage-detail"></span>
+          <span class="tag" title="A real device can't see this">Emulator only</span>
+        </div>
+        <div class="stage-bar" id="stage-bar" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="controls-title">
+      <h2 id="controls-title">Pile controls</h2>
+      <p class="dim small">What you'd do to a real bin. The next reading shows the effect.</p>
+      <div class="actions">
+        <button type="button" class="action" data-action="turn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.7-5.6M20 4v4h-4M20 12a8 8 0 0 1-13.7 5.6M4 20v-4h4"/></svg>
+          <span><b>Turn the pile</b><small>Air in: O₂ up, CO₂ down, the core cools for a bit.</small></span>
+        </button>
+        <button type="button" class="action" data-action="water">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg>
+          <span><b>Add water</b><small>Moisture +6 %. Too dry and the pile stalls; too wet and it runs short of O₂.</small></span>
+        </button>
+        <button type="button" class="action" data-action="feedstock">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21c.5-4.5 2.5-8 7-10-3.5 2.5-5 5.5-5.5 10H5zm2.5-6C6 9 10 3 20 3c0 10-6 14-12 12.5z"/></svg>
+          <span><b>Add fresh feedstock</b><small>Starts a new batch from the first stage.</small></span>
+        </button>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="uplink-title">
+      <div class="card-head">
+        <h2 id="uplink-title">Cloud uplink</h2>
+        <span class="pill" id="uplink-pill" data-tone="dim"></span>
+      </div>
+      <p class="small" id="uplink-message"></p>
+      <dl class="facts">
+        <div class="wide"><dt>Sends to</dt><dd><code id="records-url"></code></dd></div>
+        <div><dt>Last sent</dt><dd id="last-sent">never</dd></div>
+        <div><dt>Waiting to send</dt><dd id="queued">0</dd></div>
+        <div><dt>Sent</dt><dd id="sent">0</dd></div>
+        <div><dt>Dropped</dt><dd id="dropped">0</dd></div>
+      </dl>
+      <div class="row">
+        <button type="button" class="btn" id="pause-button">Pause uploads</button>
+        <button type="button" class="btn" id="retry-button" hidden>Retry now</button>
+      </div>
+    </section>
+
+    <section class="card span-2" aria-labelledby="log-title">
+      <h2 id="log-title">Activity</h2>
+      <ul class="log" id="log"></ul>
+    </section>
+  </main>
+
+  <footer class="dim small" id="footer"></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+{
+ "note": "Simulated pilot dataset (mock-data/compostiq_mock_readings.csv), shown until the API's /public endpoints are live.",
+ "stats": {
+  "bins": 3,
+  "countries": 1,
+  "methods": 3,
+  "active_devices": 3,
+  "readings_total": 568,
+  "readings_24h": 4,
+  "first_reading_at": "2026-08-18T00:00:00Z",
+  "last_reading_at": "2026-10-06T20:00:00Z",
+  "updated_at": "2026-10-06T20:00:00Z"
+ },
+ "bins_by_country": [
+  {
+   "country": "ID",
+   "name": "Indonesia",
+   "bins": 3
+  }
+ ],
+ "trends": {
+  "days": [
+   {
+    "date": "2026-08-18",
+    "temperature_c": 32.19,
+    "moisture_pct": 63.69
+   },
+   {
+    "date": "2026-08-19",
+    "temperature_c": 40.64,
+    "moisture_pct": 61.12
+   },
+   {
+    "date": "2026-08-20",
+    "temperature_c": 47.07,
+    "moisture_pct": 59.47
+   },
+   {
+    "date": "2026-08-21",
+    "temperature_c": 53.95,
+    "moisture_pct": 56.75
+   },
+   {
+    "date": "2026-08-22",
+    "temperature_c": 56.65,
+    "moisture_pct": 52.21
+   },
+   {
+    "date": "2026-08-23",
+    "temperature_c": 58.53,
+    "moisture_pct": 51.6
+   },
+   {
+    "date": "2026-08-24",
+    "temperature_c": 59.61,
+    "moisture_pct": 51.16
+   },
+   {
+    "date": "2026-08-25",
+    "temperature_c": 60.71,
+    "moisture_pct": 50.12
+   },
+   {
+    "date": "2026-08-26",
+    "temperature_c": 62.17,
+    "moisture_pct": 48.68
+   },
+   {
+    "date": "2026-08-27",
+    "temperature_c": 64.18,
+    "moisture_pct": 46.2
+   },
+   {
+    "date": "2026-08-28",
+    "temperature_c": 60.47,
+    "moisture_pct": 47.6
+   },
+   {
+    "date": "2026-08-29",
+    "temperature_c": 56.97,
+    "moisture_pct": 49.25
+   },
+   {
+    "date": "2026-08-30",
+    "temperature_c": 52.34,
+    "moisture_pct": 48.26
+   },
+   {
+    "date": "2026-08-31",
+    "temperature_c": 48.43,
+    "moisture_pct": 46.15
+   },
+   {
+    "date": "2026-09-01",
+    "temperature_c": 44.09,
+    "moisture_pct": 44.5
+   },
+   {
+    "date": "2026-09-02",
+    "temperature_c": 39.16,
+    "moisture_pct": 44.16
+   },
+   {
+    "date": "2026-09-03",
+    "temperature_c": 35.36,
+    "moisture_pct": 42.37
+   },
+   {
+    "date": "2026-09-04",
+    "temperature_c": 31.63,
+    "moisture_pct": 40.49
+   },
+   {
+    "date": "2026-09-05",
+    "temperature_c": 32.14,
+    "moisture_pct": 45.49
+   },
+   {
+    "date": "2026-09-06",
+    "temperature_c": 32.14,
+    "moisture_pct": 44.24
+   },
+   {
+    "date": "2026-09-07",
+    "temperature_c": 31.42,
+    "moisture_pct": 43.81
+   },
+   {
+    "date": "2026-09-08",
+    "temperature_c": 32.01,
+    "moisture_pct": 44.27
+   },
+   {
+    "date": "2026-09-09",
+    "temperature_c": 31.35,
+    "moisture_pct": 43.35
+   },
+   {
+    "date": "2026-09-10",
+    "temperature_c": 31.58,
+    "moisture_pct": 44.06
+   },
+   {
+    "date": "2026-09-11",
+    "temperature_c": 31.01,
+    "moisture_pct": 43.01
+   },
+   {
+    "date": "2026-09-12",
+    "temperature_c": 31.31,
+    "moisture_pct": 43.48
+   },
+   {
+    "date": "2026-09-13",
+    "temperature_c": 30.95,
+    "moisture_pct": 42.64
+   },
+   {
+    "date": "2026-09-14",
+    "temperature_c": 30.65,
+    "moisture_pct": 42.08
+   },
+   {
+    "date": "2026-09-15",
+    "temperature_c": 30.89,
+    "moisture_pct": 41.77
+   },
+   {
+    "date": "2026-09-16",
+    "temperature_c": 29.63,
+    "moisture_pct": 41.57
+   }
+  ]
+ }
+}

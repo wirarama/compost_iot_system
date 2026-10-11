@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open compost data for research · CompostIQ</title>
+<meta name="description" content="Anonymised hourly readings from working compost bins, labelled by composting phase. Free to use, no sign-up.">
+<link rel="canonical" href="https://compostiq.win/open-data/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CompostIQ">
+<meta property="og:title" content="Open compost data for research · CompostIQ">
+<meta property="og:description" content="Anonymised hourly readings from working compost bins, labelled by composting phase. Free to use, no sign-up.">
+<meta property="og:url" content="https://compostiq.win/open-data/">
+<meta name="theme-color" content="#3D6B09">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700..800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+<div class="wrap site-header__row">
+<a class="brand" href="/" aria-label="CompostIQ home">
+<span class="brand__mark"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 21c.5-4.5 2.5-8 7-10"/><path d="M9 18c6.218 0 10.5-3.288 11-12v-2h-4.014c-9 0-11.986 4-12 9c0 1 0 3 2 5h3z"/></svg></span>
+<span>Compost<span class="brand__accent">IQ</span></span>
+</a>
+<nav class="site-nav" aria-label="Main">
+<a href="/#how">How it works</a>
+<a href="/open-data/" aria-current="true">Open data</a>
+<a href="/docs/">Docs</a>
+</nav>
+<div class="site-header__cta">
+<a class="btn btn--ghost hide-sm" href="https://dashboard.compostiq.win/login">Sign in</a>
+<a class="btn btn--primary" href="https://dashboard.compostiq.win/register">Create account</a>
+</div>
+</div>
+</header>
+
+<main id="main">
+
+<section class="hero">
+<div class="wrap hero__grid">
+<div class="hero__copy">
+<span class="eyebrow">Open data for research</span>
+<h1 class="display-1">Real compost piles, measured every hour.</h1>
+<p class="lead">Anonymised readings from working compost bins: temperature, moisture, oxygen, CO₂ and ammonia, each labelled with its composting phase. Free to use. No account or key needed.</p>
+<div class="cluster hero__actions">
+<a class="btn btn--primary" href="/docs/">Get started</a>
+<a class="btn btn--ghost" href="/docs/api/">API reference</a>
+<a class="btn btn--ghost" href="/downloads/compostiq-readings.csv" download><svg class="icon icon--sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/><path d="M7 11l5 5l5-5"/><path d="M12 4l0 12"/></svg>Download CSV</a>
+</div>
+</div>
+<div class="terminal">
+<div class="terminal__head"><span>Terminal</span><span class="tag tag--on-dark">200 OK</span></div>
+<pre class="code"><span class="t-p">$</span> curl "https://api.compostiq.win/research/readings?method=takakura&amp;limit=1"
+
+{
+  <span class="t-k">"items"</span>: [{
+    <span class="t-k">"bin_ref"</span>: <span class="t-s">"b_1d0ca7"</span>,
+    <span class="t-k">"country"</span>: <span class="t-s">"ID"</span>,
+    <span class="t-k">"method"</span>: <span class="t-s">"takakura"</span>,
+    <span class="t-k">"recorded_at"</span>: <span class="t-s">"2026-08-26T00:00:00Z"</span>,
+    <span class="t-k">"temperature_c"</span>: <span class="t-n">61.58</span>,
+    <span class="t-k">"moisture_pct"</span>: <span class="t-n">52.46</span>,
+    <span class="t-k">"oxygen_pct"</span>: <span class="t-n">3.26</span>,
+    <span class="t-k">"co2_pct"</span>: <span class="t-n">8.61</span>,
+    <span class="t-k">"nh3_relative"</span>: <span class="t-n">0.889</span>,
+    <span class="t-k">"stage_name"</span>: <span class="t-s">"Peak Decomposition"</span>
+  }],
+  <span class="t-k">"next_cursor"</span>: <span class="t-s">"eyJ0IjoiMjAyNi0wOC0yNlQwMTowMFoifQ"</span>
+}</pre>
+</div>
+</div>
+</section>
+
+<section id="downloads" class="section section--no-top">
+<div class="wrap stack stack--sm">
+<div class="card glance">
+<div class="glance__item"><div class="glance__value" data-stat="bins">–</div><div class="glance__label">Bins</div></div>
+<div class="glance__item"><div class="glance__value" data-stat="countries">–</div><div class="glance__label">Countries</div></div>
+<div class="glance__item"><div class="glance__value" data-stat="methods">–</div><div class="glance__label">Methods</div></div>
+<div class="glance__item"><div class="glance__value" data-stat="readings_total">–</div><div class="glance__label">Readings</div></div>
+<div class="glance__item"><div class="glance__value glance__value--sm" data-stat="period">–</div><div class="glance__label">Period covered</div></div>
+</div>
+<div class="note-row">
+<p data-figures-note>Figures come from the CompostIQ API.</p>
+<p>Bulk files (simulated preview data for now): <a href="/downloads/compostiq-readings.csv" download>CSV, 57.1 KB</a> · <a href="/downloads/compostiq-readings.json" download>JSON, 157.5 KB</a> · <a href="/docs/api/#changelog">Changelog</a></p>
+</div>
+</div>
+</section>
+
+<section id="fields" class="section section--tint">
+<div class="wrap stack stack--md">
+<div class="split">
+<div class="split__main stack">
+<span class="eyebrow">What's in a reading</span>
+<h2 class="display-2">One row per bin, per hour.</h2>
+</div>
+<p class="split__aside split__aside--narrow text-2">Readings from a bin's sensors are averaged into hourly rows. The API and the bulk files return the same fields.</p>
+</div>
+<div class="tbl-box">
+<table class="tbl tbl--wide">
+<thead><tr><th scope="col">Field</th><th scope="col">Type · unit</th><th scope="col">What it means</th></tr></thead>
+<tbody>
+<tr><td><code>bin_ref</code></td><td>string</td><td>A random reference for one bin. Stable across the dataset, never linked to an account.</td></tr>
+<tr><td><code>country</code></td><td>ISO 3166-1 alpha-2</td><td>Where the bin is, at country level only. For example <code>ID</code>.</td></tr>
+<tr><td><code>method</code></td><td>enum</td><td><code>takakura</code>, <code>bokashi</code> or <code>aerated_static_pile</code>.</td></tr>
+<tr><td><code>recorded_at</code></td><td>ISO 8601 · UTC</td><td>Start of the hour the row covers.</td></tr>
+<tr><td><code>temperature_c</code></td><td>number · °C</td><td>Core temperature of the pile.</td></tr>
+<tr><td><code>moisture_pct</code></td><td>number · %</td><td>Moisture content. <code>null</code> when the probe dropped out.</td></tr>
+<tr><td><code>oxygen_pct</code></td><td>number · %</td><td>Oxygen in the pile, 0 to 21.</td></tr>
+<tr><td><code>co2_pct</code></td><td>number · %</td><td>Carbon dioxide in the pile.</td></tr>
+<tr><td><code>nh3_relative</code></td><td>number · 0–1</td><td>Relative ammonia intensity. Not a ppm value.</td></tr>
+<tr><td><code>mq135_composite_ppm</code></td><td>number · ppm</td><td>Raw MQ-135 gas sensor response. A composite signal, not clean CO₂.</td></tr>
+<tr><td><code>stage_id</code>, <code>stage_name</code></td><td>0–4 · string</td><td>The composting phase the rule engine assigned to this hour.</td></tr>
+<tr><td><code>faults</code></td><td>array of codes</td><td>Conditions flagged in this hour, for example <code>ANAEROBIC_RISK</code> or <code>MOISTURE_LOW</code>. In the CSV they are joined with <code>;</code>.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+
+<section id="anonymisation" class="section">
+<div class="wrap stack stack--md">
+<div class="stack">
+<span class="eyebrow">How we anonymise</span>
+<h2 class="display-2">Everything about the pile. Nothing about the person.</h2>
+</div>
+<div class="tiles tiles--md">
+<div class="card card--pad stack stack--sm">
+<span><span class="tag tag--hot">Removed</span></span>
+<ul class="plain-list">
+<li>Names and email addresses</li>
+<li>Bin names</li>
+<li>Addresses and coordinates</li>
+<li>Device MAC addresses and hardware IDs</li>
+<li>Account, bin and device database IDs</li>
+</ul>
+</div>
+<div class="card card--pad stack stack--sm">
+<span><span class="tag tag--warn">Coarsened</span></span>
+<ul class="plain-list">
+<li>Location becomes a country code</li>
+<li>Time becomes hourly averages, in UTC</li>
+<li>Several sensors in one bin become one row</li>
+</ul>
+</div>
+<div class="card card--pad stack stack--sm">
+<span><span class="tag tag--good">Replaced</span></span>
+<ul class="plain-list">
+<li>Each bin gets a random <code class="ic">bin_ref</code></li>
+<li>The reference can't be turned back into an account or address</li>
+<li>Deleted accounts disappear from the next snapshot</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+
+<section class="section section--dark">
+<div class="wrap stack stack--md">
+<div class="stack">
+<span class="eyebrow">Know your sensors</span>
+<h2 class="display-2">Read this before you publish.</h2>
+</div>
+<div class="tiles tiles--sm">
+<div class="caveat"><h3>MQ-135 is not a CO₂ meter</h3><p>It reacts to ammonia, CO₂ and other gases at once, and drifts from unit to unit. Treat <code>mq135_composite_ppm</code> as a composite signal.</p></div>
+<div class="caveat"><h3>Ammonia is relative</h3><p><code>nh3_relative</code> runs from 0 to 1. It shows when ammonia rises and falls, not how much is present.</p></div>
+<div class="caveat"><h3>A tropical baseline</h3><p>The pilot site sits at 24–32 °C ambient, so piles start near 28 °C and cool back to it. Expect higher floors than temperate data.</p></div>
+<div class="caveat"><h3>Phases are rule-based</h3><p>Stage labels come from temperature bands plus the 24-hour trend, not lab analysis. Use them as a guide, not ground truth.</p></div>
+</div>
+</div>
+</section>
+
+<section id="stages" class="section">
+<div class="wrap stack stack--md">
+<div class="split">
+<div class="split__main stack">
+<span class="eyebrow">Phase definitions</span>
+<h2 class="display-2">The ranges behind every stage label.</h2>
+</div>
+<p class="split__aside split__aside--narrow text-2">Also returned by <code class="ic">GET /research/stages</code>, so your code can use the same numbers we do.</p>
+</div>
+<div class="tbl-box">
+<table class="tbl tbl--wide">
+<thead><tr><th scope="col">Stage</th><th scope="col">Temperature</th><th scope="col">Moisture</th><th scope="col">Oxygen</th><th scope="col">CO₂</th><th scope="col">Typical length</th></tr></thead>
+<tbody>
+<tr><td class="tbl__key"><span class="mono dim">0</span>  Early mesophilic</td><td>28–45 °C</td><td>60–65 %</td><td>8–15 %</td><td>0.5–3 %</td><td>1–3 days</td></tr>
+<tr><td class="tbl__key"><span class="mono dim">1</span>  Active thermophilic</td><td>45–60 °C</td><td>55–60 %</td><td>5–8 %</td><td>3–6 %</td><td>2–4 days</td></tr>
+<tr><td class="tbl__key"><span class="mono dim">2</span>  Peak decomposition</td><td>57–65 °C</td><td>50–58 %</td><td>2–5 %</td><td>6–10 %</td><td>4–7 days</td></tr>
+<tr><td class="tbl__key"><span class="mono dim">3</span>  Cooling</td><td>30–60 °C</td><td>45–55 %</td><td>5–12 %</td><td>2–6 %</td><td>5–10 days</td></tr>
+<tr><td class="tbl__key"><span class="mono dim">4</span>  Maturation</td><td>28–32 °C</td><td>40–50 %</td><td>12–20 %</td><td>0.5–2 %</td><td>24–36 days</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+
+<section id="cite" class="section section--no-top">
+<div class="wrap tiles tiles--lg">
+<div class="card card--pad stack">
+<span class="eyebrow">Use and cite</span>
+<h2 class="display-3">Free to use with credit.</h2>
+<p class="text-2">The dataset is published under [LICENCE]. Please cite it like this:</p>
+<p class="cite">CompostIQ ([YEAR]). <em>CompostIQ open compost telemetry</em>, release [VERSION]. https://compostiq.win/open-data/</p>
+<p class="small text-2">Published something with it? Tell us at [CONTACT EMAIL] and we'll link to it.</p>
+</div>
+<div class="panel-green">
+<div class="stack stack--sm">
+<h2 class="display-3">Ready for your first request?</h2>
+<p>The quickstart takes about five minutes and ends with the data in a pandas DataFrame.</p>
+</div>
+<div class="cluster">
+<a class="btn btn--light" href="/docs/">Open the quickstart</a>
+<a class="btn btn--on-green" href="/docs/api/">API reference</a>
+</div>
+</div>
+</div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+<div class="wrap">
+<div class="footer-top">
+<div class="footer-brand">
+<span class="footer-brand__name">Compost<span>IQ</span></span>
+<p>Sensors, alerts and open data for better compost.</p>
+</div>
+<nav class="footer-col" aria-label="Product">
+<span class="footer-col__title">Product</span>
+<a href="/#how">How it works</a>
+<a href="https://dashboard.compostiq.win/login">Sign in</a>
+<a href="https://dashboard.compostiq.win/register">Create an account</a>
+</nav>
+<nav class="footer-col" aria-label="Research">
+<span class="footer-col__title">Research</span>
+<a href="/open-data/">Open data</a>
+<a href="/open-data/#downloads">Download CSV</a>
+</nav>
+<nav class="footer-col" aria-label="Docs">
+<span class="footer-col__title">Docs</span>
+<a href="/docs/">Quickstart</a>
+<a href="/docs/api/">API reference</a>
+<a href="/docs/security/">Pairing &amp; security</a>
+</nav>
+</div>
+<div class="footer-bottom">
+<span>© 2026 CompostIQ · An RMIT capstone project</span>
+<span>Open data licence: [LICENCE]</span>
+</div>
+</div>
+</footer>
+</body>
+</html>

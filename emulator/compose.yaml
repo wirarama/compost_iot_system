@@ -1,0 +1,38 @@
+# One emulated device.
+#
+#   cp .env.example .env        # optional: point it at your own API
+#   docker compose up -d --build
+#   open http://127.0.0.1:8080
+#
+# A second device alongside the first needs its own project name (so it gets
+# its own volume, and therefore its own identity) and its own port:
+#   EMULATOR_PORT=8081 docker compose -p compost-bin-2 up -d
+name: compostiq-device
+
+services:
+  emulator:
+    build:
+      context: ..
+      dockerfile: emulator/Dockerfile
+    env_file:
+      - path: .env
+        required: false
+    # fixed inside the container; pick the port on your machine with EMULATOR_PORT
+    environment:
+      DEVICE_HOST: 0.0.0.0
+      DEVICE_PORT: "8080"
+      STATE_FILE: /data/device.json
+    ports:
+      # 127.0.0.1 only: the page can pair the device and reset it, so it
+      # shouldn't be open to your whole network by accident
+      - "127.0.0.1:${EMULATOR_PORT:-8080}:8080"
+    volumes:
+      - device-data:/data
+    # lets CLOUD_API_URL=http://host.docker.internal:8000 reach an API on
+    # your machine (Docker Desktop has this already; Linux needs it spelled out)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+volumes:
+  device-data:

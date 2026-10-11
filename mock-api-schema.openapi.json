@@ -1,0 +1,388 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "CompostIQ Mock Research API",
+    "version": "2026-08-18.mock.v1",
+    "description": "Draft mock endpoint schema for batched compost telemetry ingestion and public research data access."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api/v1"
+    }
+  ],
+  "paths": {
+    "/schema": {
+      "get": {
+        "summary": "Return this mock OpenAPI schema",
+        "responses": {
+          "200": {
+            "description": "OpenAPI schema JSON"
+          }
+        }
+      }
+    },
+    "/mock/telemetry": {
+      "get": {
+        "summary": "Return generated mock dataset",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5000,
+              "default": 250
+            }
+          },
+          {
+            "name": "bin_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "stage_id",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4
+            }
+          },
+          {
+            "name": "fault",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Filtered mock telemetry response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TelemetryListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ingest/batch": {
+      "post": {
+        "summary": "Mock batched device upload endpoint",
+        "description": "Accepts hardware-agnostic readings. The current mock implementation validates envelope shape and echoes accepted records; persistent ingestion comes later.",
+        "security": [
+          {
+            "DeviceWriteKey": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchedUpload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Batch accepted by mock endpoint",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestAck"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed payload"
+          }
+        }
+      }
+    },
+    "/research/readings": {
+      "get": {
+        "summary": "Public read-only access to labelled readings",
+        "parameters": [
+          {
+            "name": "site_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bin_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 500,
+              "maximum": 5000
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Labelled research readings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TelemetryListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/research/bins": {
+      "get": {
+        "summary": "Public bin/site metadata and current mock status",
+        "responses": {
+          "200": {
+            "description": "Sites, bins, stage definitions, and fault definitions"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "DeviceWriteKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Device-Key"
+      }
+    },
+    "schemas": {
+      "BatchedUpload": {
+        "type": "object",
+        "required": ["device_id", "batch_id", "readings"],
+        "properties": {
+          "device_id": {
+            "type": "string",
+            "examples": ["cmpiq-unram-esp32-01"]
+          },
+          "site_id": {
+            "type": "string",
+            "examples": ["site-unram-pilot"]
+          },
+          "bin_id": {
+            "type": "string",
+            "examples": ["bin-unram-takakura-01"]
+          },
+          "batch_id": {
+            "type": "string",
+            "examples": ["batch-2026-08-takakura-a"]
+          },
+          "compost_context": {
+            "$ref": "#/components/schemas/CompostContext"
+          },
+          "readings": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1000,
+            "items": {
+              "$ref": "#/components/schemas/DeviceReading"
+            }
+          }
+        }
+      },
+      "DeviceReading": {
+        "type": "object",
+        "required": ["recorded_at", "telemetry"],
+        "properties": {
+          "recorded_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sequence": {
+            "type": "integer"
+          },
+          "telemetry": {
+            "$ref": "#/components/schemas/Telemetry"
+          }
+        }
+      },
+      "Telemetry": {
+        "type": "object",
+        "properties": {
+          "temperature_c": {
+            "type": "number",
+            "minimum": -10,
+            "maximum": 100
+          },
+          "moisture_pct": {
+            "type": ["number", "null"],
+            "minimum": 0,
+            "maximum": 100
+          },
+          "oxygen_pct": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 21
+          },
+          "co2_pct": {
+            "type": "number",
+            "minimum": 0
+          },
+          "nh3_relative": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "mq135_composite_ppm": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Composite MQ-135 response. Not a clean CO2 measurement."
+          }
+        }
+      },
+      "CompostContext": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": ["takakura", "bokashi", "aerated_static_pile"]
+          },
+          "bacterial_context": {
+            "type": "string"
+          },
+          "feedstock": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "TelemetryListResponse": {
+        "type": "object",
+        "required": ["count", "data"],
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LabelledReading"
+            }
+          }
+        }
+      },
+      "LabelledReading": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DeviceReading"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "reading_id": {
+                "type": "string"
+              },
+              "site_id": {
+                "type": "string"
+              },
+              "bin_id": {
+                "type": "string"
+              },
+              "device_id": {
+                "type": "string"
+              },
+              "batch_id": {
+                "type": "string"
+              },
+              "compost_context": {
+                "$ref": "#/components/schemas/CompostContext"
+              },
+              "label": {
+                "type": "object",
+                "properties": {
+                  "stage_id": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 4
+                  },
+                  "stage_name": {
+                    "type": "string"
+                  },
+                  "days_until_ready": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "faults": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "severity": {
+                      "type": "string",
+                      "enum": ["info", "warning", "critical"]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "IngestAck": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "examples": ["accepted"]
+          },
+          "accepted_count": {
+            "type": "integer"
+          },
+          "rejected_count": {
+            "type": "integer"
+          },
+          "mock_persistence": {
+            "type": "boolean",
+            "const": false
+          }
+        }
+      }
+    }
+  }
+}

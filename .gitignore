@@ -1,0 +1,14 @@
+CLAUDE.md
+.venv
+__pycache__/
+data/
+.env
+# generated simulator runs (recreated by simulator/app.py on demand)
+simulator/Data/
+
+# secrets
+.env
+
+.vscode/
+# test device key saved by emulator/tools/compostiq_test_device.py
+compostiq_test_device.json
